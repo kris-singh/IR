@@ -1,0 +1,117 @@
+URL: https://docs.python.org/3/howto/argparse.html
+
+Title: Argparse Tutorial — Python 3.5.2 documentation
+
+Doc Id: 302
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :This tutorial is intended to be a gentle introduction to argparse, the
+recommended command-line parsing module in the Python standard library.
+Note
+There are two other modules that fulfill the same task, namely
+getopt (an equivalent for getopt() from the C
+language) and the deprecated optparse.
+Note also that argparse is based on optparse,
+and therefore very similar in terms of usage.
+Let’s show the sort of functionality that we are going to explore in this
+introductory tutorial by making use of the ls command:
+A few concepts we can learn from the four commands:
+Let us start with a very simple example which does (almost) nothing:
+Following is a result of running the code:
+Here is what is happening:
+An example:
+And running the code:
+Here is what’s happening:
+Note however that, although the help display looks nice and all, it currently
+is not as helpful as it can be. For example we see that we got echo as a
+positional argument, but we don’t know what it does, other than by guessing or
+by reading the source code. So, let’s make it a bit more useful:
+And we get:
+Now, how about doing something even more useful:
+Following is a result of running the code:
+That didn’t go so well. That’s because argparse treats the options we
+give it as strings, unless we tell it otherwise. So, let’s tell
+argparse to treat that input as an integer:
+Following is a result of running the code:
+That went well. The program now even helpfully quits on bad illegal input
+before proceeding.
+So far we, have been playing with positional arguments. Let us
+have a look on how to add optional ones:
+And the output:
+Here is what is happening:
+The above example accepts arbitrary integer values for --verbosity, but for
+our simple program, only two values are actually useful, True or False.
+Let’s modify the code accordingly:
+And the output:
+Here is what is happening:
+If you are familiar with command line usage,
+you will notice that I haven’t yet touched on the topic of short
+versions of the options. It’s quite simple:
+And here goes:
+Note that the new ability is also reflected in the help text.
+Our program keeps growing in complexity:
+And now the output:
+How about we give this program of ours back the ability to have
+multiple verbosity values, and actually get to use them:
+And the output:
+These all look good except the last one, which exposes a bug in our program.
+Let’s fix it by restricting the values the --verbosity option can accept:
+And the output:
+Note that the change also reflects both in the error message as well as the
+help string.
+Now, let’s use a different approach of playing with verbosity, which is pretty
+common. It also matches the way the CPython executable handles its own
+verbosity argument (check the output of python --help):
+We have introduced another action, “count”,
+to count the number of occurrences of a specific optional arguments:
+Let’s fix:
+And this is what it gives:
+Let’s fix that bug:
+We’ve just introduced yet another keyword, default.
+We’ve set it to 0 in order to make it comparable to the other int values.
+Remember that by default,
+if an optional argument isn’t specified,
+it gets the None value, and that cannot be compared to an int value
+(hence the TypeError exception).
+And:
+You can go quite far just with what we’ve learned so far,
+and we have only scratched the surface.
+The argparse module is very powerful,
+and we’ll explore a bit more of it before we end this tutorial.
+What if we wanted to expand our tiny program to perform other powers,
+not just squares:
+Output:
+Notice that so far we’ve been using verbosity level to change the text
+that gets displayed. The following example instead uses verbosity level
+to display more text instead:
+Output:
+So far, we have been working with two methods of an
+argparse.ArgumentParser instance. Let’s introduce a third one,
+add_mutually_exclusive_group(). It allows for us to specify options that
+conflict with each other. Let’s also change the rest of the program so that
+the new functionality makes more sense:
+we’ll introduce the --quiet option,
+which will be the opposite of the --verbose one:
+Our program is now simpler, and we’ve lost some functionality for the sake of
+demonstration. Anyways, here’s the output:
+That should be easy to follow. I’ve added that last output so you can see the
+sort of flexibility you get, i.e. mixing long form options with short form
+ones.
+Before we conclude, you probably want to tell your users the main purpose of
+your program, just in case they don’t know:
+Note that slight difference in the usage text. Note the [-v | -q],
+which tells us that we can either use -v or -q,
+but not both at the same time:
+The argparse module offers a lot more than shown here.
+Its docs are quite detailed and thorough, and full of examples.
+Having gone through this tutorial, you should easily digest them
+without feeling overwhelmed.
+HOWTO Fetch Internet Resources Using The urllib Package
+An introduction to the ipaddress module
+
+    Enter search terms or a module, class or function name.
+    
+

@@ -1,0 +1,60 @@
+\begin{thebibliography}{10}
+
+\bibitem{Adver67:online}
+Adversarial bandits and the exp3 algorithm | math ∩ programming.
+\newblock
+  \url{https://jeremykun.com/2013/11/08/adversarial-bandits-and-the-exp3-algorithm/}.
+\newblock (Accessed on 09/06/2016).
+
+\bibitem{agraw23:online}
+agrawal13.pdf.
+\newblock \url{http://jmlr.org/proceedings/papers/v28/agrawal13.pdf}.
+\newblock (Accessed on 09/06/2016).
+
+\bibitem{Conte89:online}
+Contextual bandits « machine learning (theory).
+\newblock \url{http://hunch.net/?p=298}.
+\newblock (Accessed on 09/06/2016).
+
+\bibitem{AnInt60:online}
+An introduction to contextual bandits - the stream blog.
+\newblock \url{http://blog.getstream.io/introduction-contextual-bandits/}.
+\newblock (Accessed on 09/06/2016).
+
+\bibitem{Learn49:online}
+Learning for contextual bandits.
+\newblock \url{http://hunch.net/~exploration_learning/main.pdf}.
+\newblock (Accessed on 09/06/2016).
+
+\bibitem{Multi59:online}
+Multi-armed bandits.
+\newblock
+  \url{https://dataorigami.net/blogs/napkin-folding/79031811-multi-armed-bandits}.
+\newblock (Accessed on 09/06/2016).
+
+\bibitem{Perso60:online}
+Personalization with contextual bandits - richrelevance engineering blog :
+  Richrelevance engineering blog.
+\newblock
+  \url{http://engineering.richrelevance.com/personalization-contextual-bandits/}.
+\newblock (Accessed on 09/06/2016).
+
+\bibitem{Li2010}
+Lihong Li, Wei Chu, and John Langford.
+\newblock {A Contextual-Bandit Approach to Personalized News Article
+  Recommendation}.
+\newblock pages 661--670, 2010.
+
+\bibitem{Li2011}
+Lihong Li, Wei Chu, John Langford, Taesup Moon, and Xuanhui Wang.
+\newblock {An Unbiased Offline Evaluation of Contextual Bandit Algorithms with
+  Generalized Linear Models}.
+\newblock {\em Stat.Berkeley.Edu}, 1:1--18, 2011.
+
+\bibitem{Zeng2016}
+Chunqiu Zeng, Qing Wang, Shekoofeh Mokhtari, and Tao Li.
+\newblock {Online Context-Aware Recommendation with Time Varying Multi-Armed
+  Bandit}.
+\newblock 2016.
+
+\end{thebibliography}

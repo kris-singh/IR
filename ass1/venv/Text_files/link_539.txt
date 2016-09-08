@@ -1,0 +1,99 @@
+URL: https://docs.python.org/3/howto/sorting.html
+
+Title: Sorting HOW TO — Python 3.5.2 documentation
+
+Doc Id: 539
+
+Meta Tags : No meta tag found in document
+
+Date :Aug 09, 2016
+
+Content :Python lists have a built-in list.sort() method that modifies the list
+in-place.  There is also a sorted() built-in function that builds a new
+sorted list from an iterable.
+In this document, we explore the various techniques for sorting data using Python.
+A simple ascending sort is very easy: just call the sorted() function. It
+returns a new sorted list:
+You can also use the list.sort() method. It modifies the list
+in-place (and returns None to avoid confusion). Usually it’s less convenient
+than sorted() - but if you don’t need the original list, it’s slightly
+more efficient.
+Another difference is that the list.sort() method is only defined for
+lists. In contrast, the sorted() function accepts any iterable.
+Both list.sort() and sorted() have a key parameter to specify a
+function to be called on each list element prior to making comparisons.
+For example, here’s a case-insensitive string comparison:
+The value of the key parameter should be a function that takes a single argument
+and returns a key to use for sorting purposes. This technique is fast because
+the key function is called exactly once for each input record.
+A common pattern is to sort complex objects using some of the object’s indices
+as keys. For example:
+The same technique works for objects with named attributes. For example:
+The key-function patterns shown above are very common, so Python provides
+convenience functions to make accessor functions easier and faster. The
+operator module has itemgetter(),
+attrgetter(), and a methodcaller() function.
+Using those functions, the above examples become simpler and faster:
+The operator module functions allow multiple levels of sorting. For example, to
+sort by grade then by age:
+Both list.sort() and sorted() accept a reverse parameter with a
+boolean value. This is used to flag descending sorts. For example, to get the
+student data in reverse age order:
+Sorts are guaranteed to be stable. That means that
+when multiple records have the same key, their original order is preserved.
+Notice how the two records for blue retain their original order so that
+('blue', 1) is guaranteed to precede ('blue', 2).
+This wonderful property lets you build complex sorts in a series of sorting
+steps. For example, to sort the student data by descending grade and then
+ascending age, do the age sort first and then sort again using grade:
+The Timsort algorithm used in Python
+does multiple sorts efficiently because it can take advantage of any ordering
+already present in a dataset.
+This idiom is called Decorate-Sort-Undecorate after its three steps:
+For example, to sort the student data by grade using the DSU approach:
+This idiom works because tuples are compared lexicographically; the first items
+are compared; if they are the same then the second items are compared, and so
+on.
+It is not strictly necessary in all cases to include the index i in the
+decorated list, but including it gives two benefits:
+Another name for this idiom is
+Schwartzian transform,
+after Randal L. Schwartz, who popularized it among Perl programmers.
+Now that Python sorting provides key-functions, this technique is not often needed.
+Many constructs given in this HOWTO assume Python 2.4 or later. Before that,
+there was no sorted() builtin and list.sort() took no keyword
+arguments. Instead, all of the Py2.x versions supported a cmp parameter to
+handle user specified comparison functions.
+In Py3.0, the cmp parameter was removed entirely (as part of a larger effort to
+simplify and unify the language, eliminating the conflict between rich
+comparisons and the __cmp__() magic method).
+In Py2.x, sort allowed an optional function which can be called for doing the
+comparisons. That function should take two arguments to be compared and then
+return a negative value for less-than, return zero if they are equal, or return
+a positive value for greater-than. For example, we can do:
+Or you can reverse the order of comparison with:
+When porting code from Python 2.x to 3.x, the situation can arise when you have
+the user supplying a comparison function and you need to convert that to a key
+function. The following wrapper makes that easy to do:
+To convert to a key function, just wrap the old comparison function:
+In Python 3.2, the functools.cmp_to_key() function was added to the
+functools module in the standard library.
+For locale aware sorting, use locale.strxfrm() for a key function or
+locale.strcoll() for a comparison function.
+The reverse parameter still maintains sort stability (so that records with
+equal keys retain the original order). Interestingly, that effect can be
+simulated without the parameter by using the builtin reversed() function
+twice:
+The sort routines are guaranteed to use __lt__() when making comparisons
+between two objects. So, it is easy to add a standard sort order to a class by
+defining an __lt__() method:
+Key functions need not depend directly on the objects being sorted. A key
+function can also access external resources. For instance, if the student grades
+are stored in a dictionary, they can be used to sort a separate list of student
+names:
+Socket Programming HOWTO
+Unicode HOWTO
+
+    Enter search terms or a module, class or function name.
+    
+

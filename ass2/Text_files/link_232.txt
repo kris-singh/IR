@@ -1,0 +1,40 @@
+URL: https://docs.python.org/3/library/__future__.html
+
+Title: 29.10. __future__ — Future statement definitions — Python 3.5.2 documentation
+
+Doc Id: 232
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :Source code: Lib/__future__.py
+__future__ is a real module, and serves three purposes:
+Each statement in __future__.py is of the form:
+where, normally, OptionalRelease is less than MandatoryRelease, and both are
+5-tuples of the same form as sys.version_info:
+OptionalRelease records the first release in which the feature was accepted.
+In the case of a MandatoryRelease that has not yet occurred,
+MandatoryRelease predicts the release in which the feature will become part of
+the language.
+Else MandatoryRelease records when the feature became part of the language; in
+releases at or after that, modules no longer need a future statement to use the
+feature in question, but may continue to use such imports.
+MandatoryRelease may also be None, meaning that a planned feature got
+dropped.
+Instances of class _Feature have two corresponding methods,
+getOptionalRelease() and getMandatoryRelease().
+CompilerFlag is the (bitfield) flag that should be passed in the fourth
+argument to the built-in function compile() to enable the feature in
+dynamically compiled code.  This flag is stored in the compiler_flag
+attribute on _Feature instances.
+No feature description will ever be deleted from __future__. Since its
+introduction in Python 2.1 the following features have found their way into the
+language using this mechanism:
+See also
+29.9. traceback — Print or retrieve a stack traceback
+29.11. gc — Garbage Collector interface
+
+    Enter search terms or a module, class or function name.
+    
+

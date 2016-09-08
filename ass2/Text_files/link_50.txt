@@ -1,0 +1,488 @@
+URL: https://docs.python.org/3/library/re.html
+
+Title: 6.2. re — Regular expression operations — Python 3.5.2 documentation
+
+Doc Id: 50
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :Source code: Lib/re.py
+This module provides regular expression matching operations similar to
+those found in Perl.
+Both patterns and strings to be searched can be Unicode strings as well as
+8-bit strings. However, Unicode strings and 8-bit strings cannot be mixed:
+that is, you cannot match a Unicode string with a byte pattern or
+vice-versa; similarly, when asking for a substitution, the replacement
+string must be of the same type as both the pattern and the search string.
+Regular expressions use the backslash character ('\') to indicate
+special forms or to allow special characters to be used without invoking
+their special meaning.  This collides with Python’s usage of the same
+character for the same purpose in string literals; for example, to match
+a literal backslash, one might have to write '\\\\' as the pattern
+string, because the regular expression must be \\, and each
+backslash must be expressed as \\ inside a regular Python string
+literal.
+The solution is to use Python’s raw string notation for regular expression
+patterns; backslashes are not handled in any special way in a string literal
+prefixed with 'r'.  So r"\n" is a two-character string containing
+'\' and 'n', while "\n" is a one-character string containing a
+newline.  Usually patterns will be expressed in Python code using this raw
+string notation.
+It is important to note that most regular expression operations are available as
+module-level functions and methods on
+compiled regular expressions.  The functions are shortcuts
+that don’t require you to compile a regex object first, but miss some
+fine-tuning parameters.
+A regular expression (or RE) specifies a set of strings that matches it; the
+functions in this module let you check if a particular string matches a given
+regular expression (or if a given regular expression matches a particular
+string, which comes down to the same thing).
+Regular expressions can be concatenated to form new regular expressions; if A
+and B are both regular expressions, then AB is also a regular expression.
+In general, if a string p matches A and another string q matches B, the
+string pq will match AB.  This holds unless A or B contain low precedence
+operations; boundary conditions between A and B; or have numbered group
+references.  Thus, complex expressions can easily be constructed from simpler
+primitive expressions like the ones described here.  For details of the theory
+and implementation of regular expressions, consult the Friedl book referenced
+above, or almost any textbook about compiler construction.
+A brief explanation of the format of regular expressions follows.  For further
+information and a gentler presentation, consult the Regular Expression HOWTO.
+Regular expressions can contain both special and ordinary characters. Most
+ordinary characters, like 'A', 'a', or '0', are the simplest regular
+expressions; they simply match themselves.  You can concatenate ordinary
+characters, so last matches the string 'last'.  (In the rest of this
+section, we’ll write RE’s in this special style, usually without quotes, and
+strings to be matched 'in single quotes'.)
+Some characters, like '|' or '(', are special. Special
+characters either stand for classes of ordinary characters, or affect
+how the regular expressions around them are interpreted. Regular
+expression pattern strings may not contain null bytes, but can specify
+the null byte using a \number notation such as '\x00'.
+The special characters are:
+Either escapes special characters (permitting you to match characters like
+'*', '?', and so forth), or signals a special sequence; special
+sequences are discussed below.
+If you’re not using a raw string to express the pattern, remember that Python
+also uses the backslash as an escape sequence in string literals; if the escape
+sequence isn’t recognized by Python’s parser, the backslash and subsequent
+character are included in the resulting string.  However, if Python would
+recognize the resulting sequence, the backslash should be repeated twice.  This
+is complicated and hard to understand, so it’s highly recommended that you use
+raw strings for all but the simplest expressions.
+Used to indicate a set of characters.  In a set:
+(One or more letters from the set 'a', 'i', 'L', 'm',
+'s', 'u', 'x'.)  The group matches the empty string; the
+letters set the corresponding flags: re.A (ASCII-only matching),
+re.I (ignore case), re.L (locale dependent),
+re.M (multi-line), re.S (dot matches all),
+and re.X (verbose), for the entire regular expression. (The
+flags are described in Module Contents.) This
+is useful if you wish to include the flags as part of the regular
+expression, instead of passing a flag argument to the
+re.compile() function.
+Note that the (?x) flag changes how the expression is parsed. It should be
+used first in the expression string, or after one or more whitespace characters.
+If there are non-whitespace characters before the flag, the results are
+undefined.
+Similar to regular parentheses, but the substring matched by the group is
+accessible via the symbolic group name name.  Group names must be valid
+Python identifiers, and each group name must be defined only once within a
+regular expression.  A symbolic group is also a numbered group, just as if
+the group were not named.
+Named groups can be referenced in three contexts.  If the pattern is
+(?P<quote>['"]).*?(?P=quote) (i.e. matching a string quoted with either
+single or double quotes):
+Matches if the current position in the string is preceded by a match for ...
+that ends at the current position.  This is called a positive lookbehind
+assertion. (?<=abc)def will find a match in abcdef, since the
+lookbehind will back up 3 characters and check if the contained pattern matches.
+The contained pattern must only match strings of some fixed length, meaning that
+abc or a|b are allowed, but a* and a{3,4} are not.  Note that
+patterns which start with positive lookbehind assertions will not match at the
+beginning of the string being searched; you will most likely want to use the
+search() function rather than the match() function:
+This example looks for a word following a hyphen:
+Changed in version 3.5: Added support for group references of fixed length.
+The special sequences consist of '\' and a character from the list below.
+If the ordinary character is not on the list, then the resulting RE will match
+the second character.  For example, \$ matches the character '$'.
+Matches the empty string, but only at the beginning or end of a word.
+A word is defined as a sequence of Unicode alphanumeric or underscore
+characters, so the end of a word is indicated by whitespace or a
+non-alphanumeric, non-underscore Unicode character.  Note that formally,
+\b is defined as the boundary between a \w and a \W character
+(or vice versa), or between \w and the beginning/end of the string.
+This means that r'\bfoo\b' matches 'foo', 'foo.', '(foo)',
+'bar foo baz' but not 'foobar' or 'foo3'.
+By default Unicode alphanumerics are the ones used, but this can  be changed
+by using the ASCII flag.  Inside a character range, \b
+represents the backspace character, for compatibility with Python’s string
+literals.
+Most of the standard escapes supported by Python string literals are also
+accepted by the regular expression parser:
+(Note that \b is used to represent word boundaries, and means “backspace”
+only inside character classes.)
+'\u' and '\U' escape sequences are only recognized in Unicode
+patterns.  In bytes patterns they are not treated specially.
+Octal escapes are included in a limited form.  If the first digit is a 0, or if
+there are three octal digits, it is considered an octal escape. Otherwise, it is
+a group reference.  As for string literals, octal escapes are always at most
+three digits in length.
+Changed in version 3.3: The '\u' and '\U' escape sequences have been added.
+Deprecated since version 3.5, will be removed in version 3.6: Unknown escapes consisting of '\' and ASCII letter now raise a
+deprecation warning and will be forbidden in Python 3.6.
+See also
+The module defines several functions, constants, and an exception. Some of the
+functions are simplified versions of the full featured methods for compiled
+regular expressions.  Most non-trivial applications always use the compiled
+form.
+Compile a regular expression pattern into a regular expression object, which
+can be used for matching using its match() and
+search() methods, described below.
+The expression’s behaviour can be modified by specifying a flags value.
+Values can be any of the following variables, combined using bitwise OR (the
+| operator).
+The sequence
+is equivalent to
+but using re.compile() and saving the resulting regular expression
+object for reuse is more efficient when the expression will be used several
+times in a single program.
+Note
+The compiled versions of the most recent patterns passed to
+re.compile() and the module-level matching functions are cached, so
+programs that use only a few regular expressions at a time needn’t worry
+about compiling regular expressions.
+Make \w, \W, \b, \B, \d, \D, \s and \S
+perform ASCII-only matching instead of full Unicode matching.  This is only
+meaningful for Unicode patterns, and is ignored for byte patterns.
+Note that for backward compatibility, the re.U flag still
+exists (as well as its synonym re.UNICODE and its embedded
+counterpart (?u)), but these are redundant in Python 3 since
+matches are Unicode by default for strings (and Unicode matching
+isn’t allowed for bytes).
+Display debug information about compiled expression.
+Perform case-insensitive matching; expressions like [A-Z] will match
+lowercase letters, too.  This is not affected by the current locale
+and works for Unicode characters as expected.
+Make \w, \W, \b, \B, \s and \S dependent on the
+current locale. The use of this flag is discouraged as the locale mechanism
+is very unreliable, and it only handles one “culture” at a time anyway;
+you should use Unicode matching instead, which is the default in Python 3
+for Unicode (str) patterns. This flag makes sense only with bytes patterns.
+Deprecated since version 3.5, will be removed in version 3.6: Deprecated the use of  re.LOCALE with string patterns or
+re.ASCII.
+When specified, the pattern character '^' matches at the beginning of the
+string and at the beginning of each line (immediately following each newline);
+and the pattern character '$' matches at the end of the string and at the
+end of each line (immediately preceding each newline).  By default, '^'
+matches only at the beginning of the string, and '$' only at the end of the
+string and immediately before the newline (if any) at the end of the string.
+Make the '.' special character match any character at all, including a
+newline; without this flag, '.' will match anything except a newline.
+This flag allows you to write regular expressions that look nicer and are
+more readable by allowing you to visually separate logical sections of the
+pattern and add comments. Whitespace within the pattern is ignored, except
+when in a character class or when preceded by an unescaped backslash.
+When a line contains a # that is not in a character class and is not
+preceded by an unescaped backslash, all characters from the leftmost such
+# through the end of the line are ignored.
+This means that the two following regular expression objects that match a
+decimal number are functionally equal:
+Scan through string looking for the first location where the regular expression
+pattern produces a match, and return a corresponding match object.  Return None if no position in the string matches the
+pattern; note that this is different from finding a zero-length match at some
+point in the string.
+If zero or more characters at the beginning of string match the regular
+expression pattern, return a corresponding match object.  Return None if the string does not match the pattern;
+note that this is different from a zero-length match.
+Note that even in MULTILINE mode, re.match() will only match
+at the beginning of the string and not at the beginning of each line.
+If you want to locate a match anywhere in string, use search()
+instead (see also search() vs. match()).
+If the whole string matches the regular expression pattern, return a
+corresponding match object.  Return None if the
+string does not match the pattern; note that this is different from a
+zero-length match.
+New in version 3.4.
+Split string by the occurrences of pattern.  If capturing parentheses are
+used in pattern, then the text of all groups in the pattern are also returned
+as part of the resulting list. If maxsplit is nonzero, at most maxsplit
+splits occur, and the remainder of the string is returned as the final element
+of the list.
+If there are capturing groups in the separator and it matches at the start of
+the string, the result will start with an empty string.  The same holds for
+the end of the string:
+That way, separator components are always found at the same relative
+indices within the result list.
+Note
+split() doesn’t currently split a string on an empty pattern match.
+For example:
+Even though 'x*' also matches 0 ‘x’ before ‘a’, between ‘b’ and ‘c’,
+and after ‘c’, currently these matches are ignored.  The correct behavior
+(i.e. splitting on empty matches too and returning ['', 'a', 'b', 'c',
+'']) will be implemented in future versions of Python, but since this
+is a backward incompatible change, a FutureWarning will be raised
+in the meanwhile.
+Patterns that can only match empty strings currently never split the
+string.  Since this doesn’t match the expected behavior, a
+ValueError will be raised starting from Python 3.5:
+Changed in version 3.1: Added the optional flags argument.
+Changed in version 3.5: Splitting on a pattern that could match an empty string now raises
+a warning.  Patterns that can only match empty strings are now rejected.
+Return all non-overlapping matches of pattern in string, as a list of
+strings.  The string is scanned left-to-right, and matches are returned in
+the order found.  If one or more groups are present in the pattern, return a
+list of groups; this will be a list of tuples if the pattern has more than
+one group.  Empty matches are included in the result unless they touch the
+beginning of another match.
+Return an iterator yielding match objects over
+all non-overlapping matches for the RE pattern in string.  The string
+is scanned left-to-right, and matches are returned in the order found.  Empty
+matches are included in the result unless they touch the beginning of another
+match.
+Return the string obtained by replacing the leftmost non-overlapping occurrences
+of pattern in string by the replacement repl.  If the pattern isn’t found,
+string is returned unchanged.  repl can be a string or a function; if it is
+a string, any backslash escapes in it are processed.  That is, \n is
+converted to a single newline character, \r is converted to a carriage return, and
+so forth.  Unknown escapes such as \& are left alone.  Backreferences, such
+as \6, are replaced with the substring matched by group 6 in the pattern.
+For example:
+If repl is a function, it is called for every non-overlapping occurrence of
+pattern.  The function takes a single match object argument, and returns the
+replacement string.  For example:
+The pattern may be a string or an RE object.
+The optional argument count is the maximum number of pattern occurrences to be
+replaced; count must be a non-negative integer.  If omitted or zero, all
+occurrences will be replaced. Empty matches for the pattern are replaced only
+when not adjacent to a previous match, so sub('x*', '-', 'abc') returns
+'-a-b-c-'.
+In string-type repl arguments, in addition to the character escapes and
+backreferences described above,
+\g<name> will use the substring matched by the group named name, as
+defined by the (?P<name>...) syntax. \g<number> uses the corresponding
+group number; \g<2> is therefore equivalent to \2, but isn’t ambiguous
+in a replacement such as \g<2>0.  \20 would be interpreted as a
+reference to group 20, not a reference to group 2 followed by the literal
+character '0'.  The backreference \g<0> substitutes in the entire
+substring matched by the RE.
+Changed in version 3.1: Added the optional flags argument.
+Changed in version 3.5: Unmatched groups are replaced with an empty string.
+Deprecated since version 3.5, will be removed in version 3.6: Unknown escapes consist of '\' and ASCII letter now raise a
+deprecation warning and will be forbidden in Python 3.6.
+Perform the same operation as sub(), but return a tuple (new_string,
+number_of_subs_made).
+Changed in version 3.1: Added the optional flags argument.
+Changed in version 3.5: Unmatched groups are replaced with an empty string.
+Escape all the characters in pattern except ASCII letters, numbers and '_'.
+This is useful if you want to match an arbitrary literal string that may
+have regular expression metacharacters in it.
+Changed in version 3.3: The '_' character is no longer escaped.
+Clear the regular expression cache.
+Exception raised when a string passed to one of the functions here is not a
+valid regular expression (for example, it might contain unmatched parentheses)
+or when some other error occurs during compilation or matching.  It is never an
+error if a string contains no match for a pattern.  The error instance has
+the following additional attributes:
+The unformatted error message.
+The regular expression pattern.
+The index of pattern where compilation failed.
+The line corresponding to pos.
+The column corresponding to pos.
+Changed in version 3.5: Added additional attributes.
+Compiled regular expression objects support the following methods and
+attributes:
+Scan through string looking for the first location where this regular
+expression produces a match, and return a corresponding match object.  Return None if no position in the string matches the
+pattern; note that this is different from finding a zero-length match at some
+point in the string.
+The optional second parameter pos gives an index in the string where the
+search is to start; it defaults to 0.  This is not completely equivalent to
+slicing the string; the '^' pattern character matches at the real beginning
+of the string and at positions just after a newline, but not necessarily at the
+index where the search is to start.
+The optional parameter endpos limits how far the string will be searched; it
+will be as if the string is endpos characters long, so only the characters
+from pos to endpos - 1 will be searched for a match.  If endpos is less
+than pos, no match will be found; otherwise, if rx is a compiled regular
+expression object, rx.search(string, 0, 50) is equivalent to
+rx.search(string[:50], 0).
+If zero or more characters at the beginning of string match this regular
+expression, return a corresponding match object.
+Return None if the string does not match the pattern; note that this is
+different from a zero-length match.
+The optional pos and endpos parameters have the same meaning as for the
+search() method.
+If you want to locate a match anywhere in string, use
+search() instead (see also search() vs. match()).
+If the whole string matches this regular expression, return a corresponding
+match object.  Return None if the string does not
+match the pattern; note that this is different from a zero-length match.
+The optional pos and endpos parameters have the same meaning as for the
+search() method.
+New in version 3.4.
+Identical to the split() function, using the compiled pattern.
+Similar to the findall() function, using the compiled pattern, but
+also accepts optional pos and endpos parameters that limit the search
+region like for match().
+Similar to the finditer() function, using the compiled pattern, but
+also accepts optional pos and endpos parameters that limit the search
+region like for match().
+Identical to the sub() function, using the compiled pattern.
+Identical to the subn() function, using the compiled pattern.
+The regex matching flags.  This is a combination of the flags given to
+compile(), any (?...) inline flags in the pattern, and implicit
+flags such as UNICODE if the pattern is a Unicode string.
+The number of capturing groups in the pattern.
+A dictionary mapping any symbolic group names defined by (?P<id>) to group
+numbers.  The dictionary is empty if no symbolic groups were used in the
+pattern.
+The pattern string from which the RE object was compiled.
+Match objects always have a boolean value of True.
+Since match() and search() return None
+when there is no match, you can test whether there was a match with a simple
+if statement:
+Match objects support the following methods and attributes:
+Return the string obtained by doing backslash substitution on the template
+string template, as done by the sub() method.
+Escapes such as \n are converted to the appropriate characters,
+and numeric backreferences (\1, \2) and named backreferences
+(\g<1>, \g<name>) are replaced by the contents of the
+corresponding group.
+Changed in version 3.5: Unmatched groups are replaced with an empty string.
+Returns one or more subgroups of the match.  If there is a single argument, the
+result is a single string; if there are multiple arguments, the result is a
+tuple with one item per argument. Without arguments, group1 defaults to zero
+(the whole match is returned). If a groupN argument is zero, the corresponding
+return value is the entire matching string; if it is in the inclusive range
+[1..99], it is the string matching the corresponding parenthesized group.  If a
+group number is negative or larger than the number of groups defined in the
+pattern, an IndexError exception is raised. If a group is contained in a
+part of the pattern that did not match, the corresponding result is None.
+If a group is contained in a part of the pattern that matched multiple times,
+the last match is returned.
+If the regular expression uses the (?P<name>...) syntax, the groupN
+arguments may also be strings identifying groups by their group name.  If a
+string argument is not used as a group name in the pattern, an IndexError
+exception is raised.
+A moderately complicated example:
+Named groups can also be referred to by their index:
+If a group matches multiple times, only the last match is accessible:
+Return a tuple containing all the subgroups of the match, from 1 up to however
+many groups are in the pattern.  The default argument is used for groups that
+did not participate in the match; it defaults to None.
+For example:
+If we make the decimal place and everything after it optional, not all groups
+might participate in the match.  These groups will default to None unless
+the default argument is given:
+Return a dictionary containing all the named subgroups of the match, keyed by
+the subgroup name.  The default argument is used for groups that did not
+participate in the match; it defaults to None.  For example:
+Return the indices of the start and end of the substring matched by group;
+group defaults to zero (meaning the whole matched substring). Return -1 if
+group exists but did not contribute to the match.  For a match object m, and
+a group g that did contribute to the match, the substring matched by group g
+(equivalent to m.group(g)) is
+Note that m.start(group) will equal m.end(group) if group matched a
+null string.  For example, after m = re.search('b(c?)', 'cba'),
+m.start(0) is 1, m.end(0) is 2, m.start(1) and m.end(1) are both
+2, and m.start(2) raises an IndexError exception.
+An example that will remove remove_this from email addresses:
+For a match m, return the 2-tuple (m.start(group), m.end(group)). Note
+that if group did not contribute to the match, this is (-1, -1).
+group defaults to zero, the entire match.
+The value of pos which was passed to the search() or
+match() method of a regex object.  This is
+the index into the string at which the RE engine started looking for a match.
+The value of endpos which was passed to the search() or
+match() method of a regex object.  This is
+the index into the string beyond which the RE engine will not go.
+The integer index of the last matched capturing group, or None if no group
+was matched at all. For example, the expressions (a)b, ((a)(b)), and
+((ab)) will have lastindex == 1 if applied to the string 'ab', while
+the expression (a)(b) will have lastindex == 2, if applied to the same
+string.
+The name of the last matched capturing group, or None if the group didn’t
+have a name, or if no group was matched at all.
+The regular expression object whose match() or
+search() method produced this match instance.
+The string passed to match() or search().
+In this example, we’ll use the following helper function to display match
+objects a little more gracefully:
+Suppose you are writing a poker program where a player’s hand is represented as
+a 5-character string with each character representing a card, “a” for ace, “k”
+for king, “q” for queen, “j” for jack, “t” for 10, and “2” through “9”
+representing the card with that value.
+To see if a given string is a valid hand, one could do the following:
+That last hand, "727ak", contained a pair, or two of the same valued cards.
+To match this with a regular expression, one could use backreferences as such:
+To find out what card the pair consists of, one could use the
+group() method of the match object in the following manner:
+Python does not currently have an equivalent to scanf().  Regular
+expressions are generally more powerful, though also more verbose, than
+scanf() format strings.  The table below offers some more-or-less
+equivalent mappings between scanf() format tokens and regular
+expressions.
+To extract the filename and numbers from a string like
+you would use a scanf() format like
+The equivalent regular expression would be
+Python offers two different primitive operations based on regular expressions:
+re.match() checks for a match only at the beginning of the string, while
+re.search() checks for a match anywhere in the string (this is what Perl
+does by default).
+For example:
+Regular expressions beginning with '^' can be used with search() to
+restrict the match at the beginning of the string:
+Note however that in MULTILINE mode match() only matches at the
+beginning of the string, whereas using search() with a regular expression
+beginning with '^' will match at the beginning of each line.
+split() splits a string into a list delimited by the passed pattern.  The
+method is invaluable for converting textual data into data structures that can be
+easily read and modified by Python as demonstrated in the following example that
+creates a phonebook.
+First, here is the input.  Normally it may come from a file, here we are using
+triple-quoted string syntax:
+The entries are separated by one or more newlines. Now we convert the string
+into a list with each nonempty line having its own entry:
+Finally, split each entry into a list with first name, last name, telephone
+number, and address.  We use the maxsplit parameter of split()
+because the address has spaces, our splitting pattern, in it:
+The :? pattern matches the colon after the last name, so that it does not
+occur in the result list.  With a maxsplit of 4, we could separate the
+house number from the street name:
+sub() replaces every occurrence of a pattern with a string or the
+result of a function.  This example demonstrates using sub() with
+a function to “munge” text, or randomize the order of all the characters
+in each word of a sentence except for the first and last characters:
+findall() matches all occurrences of a pattern, not just the first
+one as search() does.  For example, if one was a writer and wanted to
+find all of the adverbs in some text, he or she might use findall() in
+the following manner:
+If one wants more information about all matches of a pattern than the matched
+text, finditer() is useful as it provides match objects instead of strings.  Continuing with the previous example, if
+one was a writer who wanted to find all of the adverbs and their positions in
+some text, he or she would use finditer() in the following manner:
+Raw string notation (r"text") keeps regular expressions sane.  Without it,
+every backslash ('\') in a regular expression would have to be prefixed with
+another one to escape it.  For example, the two following lines of code are
+functionally identical:
+When one wants to match a literal backslash, it must be escaped in the regular
+expression.  With raw string notation, this means r"\\".  Without raw string
+notation, one must use "\\\\", making the following lines of code
+functionally identical:
+A tokenizer or scanner
+analyzes a string to categorize groups of characters.  This is a useful first
+step in writing a compiler or interpreter.
+The text categories are specified with regular expressions.  The technique is
+to combine those into a single master regular expression and to loop over
+successive matches:
+The tokenizer produces the following output:
+6.1. string — Common string operations
+6.3. difflib — Helpers for computing deltas
+
+    Enter search terms or a module, class or function name.
+    
+

@@ -1,0 +1,81 @@
+URL: https://docs.python.org/3/library/asyncio-eventloops.html
+
+Title: 18.5.2. Event loops — Python 3.5.2 documentation
+
+Doc Id: 414
+
+Meta Tags : No meta tag found in document
+
+Date :Aug 08, 2016
+
+Content :The following functions are convenient shortcuts to accessing the methods of the
+global policy. Note that this provides access to the default policy, unless an
+alternative policy was set by calling set_event_loop_policy() earlier in
+the execution of the process.
+Equivalent to calling get_event_loop_policy().get_event_loop().
+Equivalent to calling get_event_loop_policy().set_event_loop(loop).
+Equivalent to calling get_event_loop_policy().new_event_loop().
+asyncio currently provides two implementations of event loops:
+SelectorEventLoop and ProactorEventLoop.
+Event loop based on the selectors module. Subclass of
+AbstractEventLoop.
+Use the most efficient selector available on the platform.
+On Windows, only sockets are supported (ex: pipes are not supported):
+see the MSDN documentation of select.
+Proactor event loop for Windows using “I/O Completion Ports” aka IOCP.
+Subclass of AbstractEventLoop.
+Availability: Windows.
+See also
+MSDN documentation on I/O Completion Ports.
+Example to use a ProactorEventLoop on Windows:
+The asyncio module has been designed to be portable, but each platform
+still has subtle differences and may not support all asyncio features.
+Common limits of Windows event loops:
+SelectorEventLoop specific limits:
+ProactorEventLoop specific limits:
+The resolution of the monotonic clock on Windows is usually around 15.6 msec.
+The best resolution is 0.5 msec. The resolution depends on the hardware
+(availability of HPET) and on the Windows
+configuration. See asyncio delayed calls.
+Changed in version 3.5: ProactorEventLoop now supports SSL.
+Character devices like PTY are only well supported since Mavericks (Mac OS
+10.9). They are not supported at all on Mac OS 10.5 and older.
+On Mac OS 10.6, 10.7 and 10.8, the default event loop is
+SelectorEventLoop which uses selectors.KqueueSelector.
+selectors.KqueueSelector does not support character devices on these
+versions.  The SelectorEventLoop can be used with
+SelectSelector or PollSelector to
+support character devices on these versions of Mac OS X. Example:
+Event loop management is abstracted with a policy pattern, to provide maximal
+flexibility for custom platforms and frameworks. Throughout the execution of a
+process, a single global policy object manages the event loops available to the
+process based on the calling context. A policy is an object implementing the
+AbstractEventLoopPolicy interface.
+For most users of asyncio, policies never have to be dealt with
+explicitly, since the default global policy is sufficient.
+The default policy defines context as the current thread, and manages an event
+loop per thread that interacts with asyncio. The module-level functions
+get_event_loop() and set_event_loop() provide convenient access to
+event loops managed by the default policy.
+An event loop policy must implement the following interface:
+Event loop policy.
+Get the event loop for the current context.
+Returns an event loop object implementing the AbstractEventLoop
+interface.
+Raises an exception in case no event loop has been set for the current
+context and the current policy does not specify to create one. It must
+never return None.
+Set the event loop for the current context to loop.
+Create and return a new event loop object according to this policy’s
+rules.
+If there’s need to set this loop as the event loop for the current
+context, set_event_loop() must be called explicitly.
+Get the current event loop policy.
+Set the current event loop policy. If policy is None, the default
+policy is restored.
+18.5.1. Base Event Loop
+18.5.3. Tasks and coroutines
+
+    Enter search terms or a module, class or function name.
+    
+

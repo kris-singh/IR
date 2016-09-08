@@ -1,0 +1,227 @@
+URL: https://docs.python.org/3/library/tkinter.html
+
+Title: 25.1. tkinter — Python interface to Tcl/Tk — Python 3.5.2 documentation
+
+Doc Id: 199
+
+Meta Tags : No meta tag found in document
+
+Date :Jul 14, 2016
+
+Content :Source code: Lib/tkinter/__init__.py
+The tkinter package (“Tk interface”) is the standard Python interface to
+the Tk GUI toolkit.  Both Tk and tkinter are available on most Unix
+platforms, as well as on Windows systems.  (Tk itself is not part of Python; it
+is maintained at ActiveState.) You can check that tkinter is properly
+installed on your system by running python -m tkinter from the command line;
+this should open a window demonstrating a simple Tk interface.
+See also
+Most of the time, tkinter is all you really need, but a number of
+additional modules are available as well.  The Tk interface is located in a
+binary module named _tkinter. This module contains the low-level
+interface to Tk, and should never be used directly by application programmers.
+It is usually a shared library (or DLL), but might in some cases be statically
+linked with the Python interpreter.
+In addition to the Tk interface module, tkinter includes a number of
+Python modules, tkinter.constants being one of the most important.
+Importing tkinter will automatically import tkinter.constants,
+so, usually, to use Tkinter all you need is a simple import statement:
+Or, more often:
+The Tk class is instantiated without arguments. This creates a toplevel
+widget of Tk which usually is the main window of an application. Each instance
+has its own associated Tcl interpreter.
+The Tcl() function is a factory function which creates an object much like
+that created by the Tk class, except that it does not initialize the Tk
+subsystem.  This is most often useful when driving the Tcl interpreter in an
+environment where one doesn’t want to create extraneous toplevel windows, or
+where one cannot (such as Unix/Linux systems without an X server).  An object
+created by the Tcl() object can have a Toplevel window created (and the Tk
+subsystem initialized) by calling its loadtk() method.
+Other modules that provide Tk support include:
+This section is not designed to be an exhaustive tutorial on either Tk or
+Tkinter.  Rather, it is intended as a stop gap, providing some introductory
+orientation on the system.
+Credits:
+This section is designed in two parts: the first half (roughly) covers
+background material, while the second half can be taken to the keyboard as a
+handy reference.
+When trying to answer questions of the form “how do I do blah”, it is often best
+to find out how to do”blah” in straight Tk, and then convert this back into the
+corresponding tkinter call. Python programmers can often guess at the
+correct Python command by looking at the Tk documentation. This means that in
+order to use Tkinter, you will have to know a little bit about Tk. This document
+can’t fulfill that role, so the best we can do is point you to the best
+documentation that exists. Here are some hints:
+See also
+The class hierarchy looks complicated, but in actual practice, application
+programmers almost always refer to the classes at the very bottom of the
+hierarchy.
+Notes:
+To make use of this reference material, there will be times when you will need
+to know how to read short passages of Tk and how to identify the various parts
+of a Tk command.   (See section Mapping Basic Tk into Tkinter for the
+tkinter equivalents of what’s below.)
+Tk scripts are Tcl programs.  Like all Tcl programs, Tk scripts are just lists
+of tokens separated by spaces.  A Tk widget is just its class, the options
+that help configure it, and the actions that make it do useful things.
+To make a widget in Tk, the command is always of the form:
+For example:
+Once created, the pathname to the widget becomes a new command.  This new
+widget command is the programmer’s handle for getting the new widget to
+perform some action.  In C, you’d express this as someAction(fred,
+someOptions), in C++, you would express this as fred.someAction(someOptions),
+and in Tk, you say:
+Note that the object name, .fred, starts with a dot.
+As you’d expect, the legal values for someAction will depend on the widget’s
+class: .fred disable works if fred is a button (fred gets greyed out), but
+does not work if fred is a label (disabling of labels is not supported in Tk).
+The legal values of someOptions is action dependent.  Some actions, like
+disable, require no arguments, others, like a text-entry box’s delete
+command, would need arguments to specify what range of text to delete.
+Class commands in Tk correspond to class constructors in Tkinter.
+The master of an object is implicit in the new name given to it at creation
+time.  In Tkinter, masters are specified explicitly.
+The configuration options in Tk are given in lists of hyphened tags followed by
+values.  In Tkinter, options are specified as keyword-arguments in the instance
+constructor, and keyword-args for configure calls or as instance indices, in
+dictionary style, for established instances.  See section
+Setting Options on setting options.
+In Tk, to perform an action on a widget, use the widget name as a command, and
+follow it with an action name, possibly with arguments (options).  In Tkinter,
+you call methods on the class instance to invoke actions on the widget.  The
+actions (methods) that a given widget can perform are listed in
+tkinter/__init__.py.
+To give a widget to the packer (geometry manager), you call pack with optional
+arguments.  In Tkinter, the Pack class holds all this functionality, and the
+various forms of the pack command are implemented as methods.  All widgets in
+tkinter are subclassed from the Packer, and so inherit all the packing
+methods. See the tkinter.tix module documentation for additional
+information on the Form geometry manager.
+From the top down:
+Options control things like the color and border width of a widget. Options can
+be set in three ways:
+For a complete explanation of a given option and its behavior, see the Tk man
+pages for the widget in question.
+Note that the man pages list “STANDARD OPTIONS” and “WIDGET SPECIFIC OPTIONS”
+for each widget.  The former is a list of options that are common to many
+widgets, the latter are the options that are idiosyncratic to that particular
+widget.  The Standard Options are documented on the options(3) man
+page.
+No distinction between standard and widget-specific options is made in this
+document.  Some options don’t apply to some kinds of widgets. Whether a given
+widget responds to a particular option depends on the class of the widget;
+buttons have a command option, labels do not.
+The options supported by a given widget are listed in that widget’s man page, or
+can be queried at runtime by calling the config() method without
+arguments, or by calling the keys() method on that widget.  The return
+value of these calls is a dictionary whose key is the name of the option as a
+string (for example, 'relief') and whose values are 5-tuples.
+Some options, like bg are synonyms for common options with long names
+(bg is shorthand for “background”). Passing the config() method the name
+of a shorthand option will return a 2-tuple, not 5-tuple. The 2-tuple passed
+back will contain the name of the synonym and the “real” option (such as
+('bg', 'background')).
+Example:
+Of course, the dictionary printed will include all the options available and
+their values.  This is meant only as an example.
+The packer is one of Tk’s geometry-management mechanisms.    Geometry managers
+are used to specify the relative positioning of the positioning of widgets
+within their container - their mutual master.  In contrast to the more
+cumbersome placer (which is used less commonly, and we do not cover here), the
+packer takes qualitative relationship specification - above, to the left of,
+filling, etc - and works everything out to determine the exact placement
+coordinates for you.
+The size of any master widget is determined by the size of the “slave widgets”
+inside.  The packer is used to control where slave widgets appear inside the
+master into which they are packed.  You can pack widgets into frames, and frames
+into other frames, in order to achieve the kind of layout you desire.
+Additionally, the arrangement is dynamically adjusted to accommodate incremental
+changes to the configuration, once it is packed.
+Note that widgets do not appear until they have had their geometry specified
+with a geometry manager.  It’s a common early mistake to leave out the geometry
+specification, and then be surprised when the widget is created but nothing
+appears.  A widget will appear only after it has had, for example, the packer’s
+pack() method applied to it.
+The pack() method can be called with keyword-option/value pairs that control
+where the widget is to appear within its container, and how it is to behave when
+the main application window is resized.  Here are some examples:
+For more extensive information on the packer and the options that it can take,
+see the man pages and page 183 of John Ousterhout’s book.
+The current-value setting of some widgets (like text entry widgets) can be
+connected directly to application variables by using special options.  These
+options are variable, textvariable, onvalue, offvalue, and
+value.  This connection works both ways: if the variable changes for any
+reason, the widget it’s connected to will be updated to reflect the new value.
+Unfortunately, in the current implementation of tkinter it is not
+possible to hand over an arbitrary Python variable to a widget through a
+variable or textvariable option.  The only kinds of variables for which
+this works are variables that are subclassed from a class called Variable,
+defined in tkinter.
+There are many useful subclasses of Variable already defined:
+StringVar, IntVar, DoubleVar, and
+BooleanVar.  To read the current value of such a variable, call the
+get() method on it, and to change its value you call the set()
+method.  If you follow this protocol, the widget will always track the value of
+the variable, with no further intervention on your part.
+For example:
+In Tk, there is a utility command, wm, for interacting with the window
+manager.  Options to the wm command allow you to control things like titles,
+placement, icon bitmaps, and the like.  In tkinter, these commands have
+been implemented as methods on the Wm class.  Toplevel widgets are
+subclassed from the Wm class, and so can call the Wm methods
+directly.
+To get at the toplevel window that contains a given widget, you can often just
+refer to the widget’s master.  Of course if the widget has been packed inside of
+a frame, the master won’t represent a toplevel window.  To get at the toplevel
+window that contains an arbitrary widget, you can call the _root() method.
+This method begins with an underscore to denote the fact that this function is
+part of the implementation, and not an interface to Tk functionality.
+Here are some examples of typical usage:
+This is any Python function that takes no arguments.  For example:
+The bind method from the widget command allows you to watch for certain events
+and to have a callback function trigger when that event type occurs.  The form
+of the bind method is:
+where:
+For example:
+Notice how the widget field of the event is being accessed in the
+turn_red() callback.  This field contains the widget that caught the X
+event.  The following table lists the other event fields you can access, and how
+they are denoted in Tk, which can be useful when referring to the Tk man pages.
+A number of widgets require “index” parameters to be passed.  These are used to
+point at a specific place in a Text widget, or to particular characters in an
+Entry widget, or to particular menu items in a Menu widget.
+Some options and methods for menus manipulate specific menu entries. Anytime a
+menu index is needed for an option or a parameter, you may pass in:
+Bitmap/Pixelmap images can be created through the subclasses of
+tkinter.Image:
+Either type of image is created through either the file or the data
+option (other options are available as well).
+The image object can then be used wherever an image option is supported by
+some widget (e.g. labels, buttons, menus). In these cases, Tk will not keep a
+reference to the image. When the last Python reference to the image object is
+deleted, the image data is deleted as well, and Tk will display an empty box
+wherever the image was used.
+Tk allows you to register and unregister a callback function which will be
+called from the Tk mainloop when I/O is possible on a file descriptor.
+Only one handler may be registered per file descriptor. Example code:
+This feature is not available on Windows.
+Since you don’t know how many bytes are available for reading, you may not
+want to use the BufferedIOBase or TextIOBase
+read() or readline() methods,
+since these will insist on reading a predefined number of bytes.
+For sockets, the recv() or
+recvfrom() methods will work fine; for other files,
+use raw reads or os.read(file.fileno(), maxbytecount).
+Registers the file handler callback function func. The file argument
+may either be an object with a fileno() method (such as
+a file or socket object), or an integer file descriptor. The mask
+argument is an ORed combination of any of the three constants below.
+The callback is called as follows:
+Unregisters a file handler.
+Constants used in the mask arguments.
+25. Graphical User Interfaces with Tk
+25.2. tkinter.ttk — Tk themed widgets
+
+    Enter search terms or a module, class or function name.
+    
+

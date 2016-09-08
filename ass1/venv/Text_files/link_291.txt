@@ -1,0 +1,78 @@
+URL: https://docs.python.org/3/howto/cporting.html
+
+Title: Porting Extension Modules to Python 3 — Python 3.5.2 documentation
+
+Doc Id: 291
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :Abstract
+Although changing the C-API was not one of Python 3’s objectives,
+the many Python-level changes made leaving Python 2’s API intact
+impossible.  In fact, some changes such as int() and
+long() unification are more obvious on the C level.  This
+document endeavors to document incompatibilities and how they can
+be worked around.
+The easiest way to compile only some code for Python 3 is to check
+if PY_MAJOR_VERSION is greater than or equal to 3.
+API functions that are not present can be aliased to their equivalents within
+conditional blocks.
+Python 3 merged together some types with similar functions while cleanly
+separating others.
+Python 3’s str() type is equivalent to Python 2’s unicode(); the C
+functions are called PyUnicode_* for both.  The old 8-bit string type has become
+bytes(), with C functions called PyBytes_*.  Python 2.6 and later provide a compatibility header,
+bytesobject.h, mapping PyBytes names to PyString ones.  For best
+compatibility with Python 3, PyUnicode should be used for textual data and
+PyBytes for binary data.  It’s also important to remember that
+PyBytes and PyUnicode in Python 3 are not interchangeable like
+PyString and PyUnicode are in Python 2.  The following example
+shows best practices with regards to PyUnicode, PyString,
+and PyBytes.
+Python 3 has only one integer type, int().  But it actually
+corresponds to Python 2’s long() type–the int() type
+used in Python 2 was removed.  In the C-API, PyInt_* functions
+are replaced by their PyLong_* equivalents.
+Python 3 has a revamped extension module initialization system.  (See
+PEP 3121.)  Instead of storing module state in globals, they should
+be stored in an interpreter specific structure.  Creating modules that
+act correctly in both Python 2 and Python 3 is tricky.  The following
+simple example demonstrates how.
+The Capsule object was introduced in Python 3.1 and 2.7 to replace
+CObject.  CObjects were useful,
+but the CObject API was problematic: it didn’t permit distinguishing
+between valid CObjects, which allowed mismatched CObjects to crash the
+interpreter, and some of its APIs relied on undefined behavior in C.
+(For further reading on the rationale behind Capsules, please see issue 5630.)
+If you’re currently using CObjects, and you want to migrate to 3.1 or newer,
+you’ll need to switch to Capsules.
+CObject was deprecated in 3.1 and 2.7 and completely removed in
+Python 3.2.  If you only support 2.7, or 3.1 and above, you
+can simply switch to Capsule.  If you need to support Python 3.0,
+or versions of Python earlier than 2.7,
+you’ll have to support both CObjects and Capsules.
+(Note that Python 3.0 is no longer supported, and it is not recommended
+for production use.)
+The following example header file capsulethunk.h may
+solve the problem for you.  Simply write your code against the
+Capsule API and include this header file after
+Python.h.  Your code will automatically use Capsules
+in versions of Python with Capsules, and switch to CObjects
+when Capsules are unavailable.
+capsulethunk.h simulates Capsules using CObjects.  However,
+CObject provides no place to store the capsule’s “name”.  As a
+result the simulated Capsule objects created by capsulethunk.h
+behave slightly differently from real Capsules.  Specifically:
+You can find capsulethunk.h in the Python source distribution
+as Doc/includes/capsulethunk.h.  We also include it here for
+your convenience:
+If you are writing a new extension module, you might consider Cython.  It translates a Python-like language to C.  The
+extension modules it creates are compatible with Python 3 and Python 2.
+Porting Python 2 Code to Python 3
+Curses Programming with Python
+
+    Enter search terms or a module, class or function name.
+    
+

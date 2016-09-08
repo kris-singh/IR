@@ -1,0 +1,859 @@
+URL: https://docs.python.org/3/whatsnew/3.3.html
+
+Title: What’s New In Python 3.3 — Python 3.5.2 documentation
+
+Doc Id: 14
+
+Meta Tags : No meta tag found in document
+
+Date :Jul 29, 2016
+
+Content :This article explains the new features in Python 3.3, compared to 3.2.
+Python 3.3 was released on September 29, 2012.  For full details,
+see the changelog.
+See also
+PEP 398 - Python 3.3 Release Schedule
+New syntax features:
+New library modules:
+New built-in features:
+Implementation improvements:
+Significantly Improved Library Modules:
+Security improvements:
+Please read on for a comprehensive list of user-facing changes.
+Virtual environments help create separate Python setups while sharing a
+system-wide base install, for ease of maintenance.  Virtual environments
+have their own set of private site packages (i.e. locally-installed
+libraries), and are optionally segregated from the system-wide site
+packages.  Their concept and implementation are inspired by the popular
+virtualenv third-party package, but benefit from tighter integration
+with the interpreter core.
+This PEP adds the venv module for programmatic access, and the
+pyvenv script for command-line access and
+administration.  The Python interpreter checks for a pyvenv.cfg,
+file whose existence signals the base of a virtual environment’s directory
+tree.
+See also
+Native support for package directories that don’t require __init__.py
+marker files and can automatically span multiple path segments (inspired by
+various third party approaches to namespace packages, as described in
+PEP 420)
+See also
+The implementation of PEP 3118 has been significantly improved.
+The new memoryview implementation comprehensively fixes all ownership and
+lifetime issues of dynamically allocated fields in the Py_buffer struct
+that led to multiple crash reports. Additionally, several functions that
+crashed or returned incorrect results for non-contiguous or multi-dimensional
+input have been fixed.
+The memoryview object now has a PEP-3118 compliant getbufferproc()
+that checks the consumer’s request type. Many new features have been
+added, most of them work in full generality for non-contiguous arrays
+and arrays with suboffsets.
+The documentation has been updated, clearly spelling out responsibilities
+for both exporters and consumers. Buffer request flags are grouped into
+basic and compound flags. The memory layout of non-contiguous and
+multi-dimensional NumPy-style arrays is explained.
+(Contributed by Stefan Krah in issue 10181.)
+See also
+PEP 3118 - Revising the Buffer Protocol
+The Unicode string type is changed to support multiple internal
+representations, depending on the character with the largest Unicode ordinal
+(1, 2, or 4 bytes) in the represented string.  This allows a space-efficient
+representation in common cases, but gives access to full UCS-4 on all
+systems.  For compatibility with existing APIs, several representations may
+exist in parallel; over time, this compatibility should be phased out.
+On the Python side, there should be no downside to this change.
+On the C API side, PEP 393 is fully backward compatible.  The legacy API
+should remain available at least five years.  Applications using the legacy
+API will not fully benefit of the memory reduction, or - worse - may use
+a bit more memory, because Python may have to maintain two versions of each
+string (in the legacy format and in the new efficient storage).
+Changes introduced by PEP 393 are the following:
+The storage of Unicode strings now depends on the highest code point in the string:
+The net effect is that for most applications, memory usage of string
+storage should decrease significantly - especially compared to former
+wide unicode builds - as, in many cases, strings will be pure ASCII
+even in international contexts (because many strings store non-human
+language data, such as XML fragments, HTTP headers, JSON-encoded data,
+etc.).  We also hope that it will, for the same reasons, increase CPU
+cache efficiency on non-trivial applications. The memory usage of
+Python 3.3 is two to three times smaller than Python 3.2, and a little
+bit better than Python 2.7, on a Django benchmark (see the PEP for
+details).
+See also
+The Python 3.3 Windows installer now includes a py launcher application
+that can be used to launch Python applications in a version independent
+fashion.
+This launcher is invoked implicitly when double-clicking *.py files.
+If only a single Python version is installed on the system, that version
+will be used to run the file. If multiple versions are installed, the most
+recent version is used by default, but this can be overridden by including
+a Unix-style “shebang line” in the Python script.
+The launcher can also be used explicitly from the command line as the py
+application. Running py follows the same version selection rules as
+implicitly launching scripts, but a more specific version can be selected
+by passing appropriate arguments (such as -3 to request Python 3 when
+Python 2 is also installed, or -2.6 to specifclly request an earlier
+Python version when a more recent version is installed).
+In addition to the launcher, the Windows installer now includes an
+option to add the newly installed Python to the system PATH.  (Contributed
+by Brian Curtin in issue 3561.)
+See also
+Launcher documentation: Python Launcher for Windows
+Installer PATH modification: Finding the Python executable
+The hierarchy of exceptions raised by operating system errors is now both
+simplified and finer-grained.
+You don’t have to worry anymore about choosing the appropriate exception
+type between OSError, IOError, EnvironmentError,
+WindowsError, mmap.error, socket.error or
+select.error.  All these exception types are now only one:
+OSError.  The other names are kept as aliases for compatibility
+reasons.
+Also, it is now easier to catch a specific error condition.  Instead of
+inspecting the errno attribute (or args[0]) for a particular
+constant from the errno module, you can catch the adequate
+OSError subclass.  The available subclasses are the following:
+And the ConnectionError itself has finer-grained subclasses:
+Thanks to the new exceptions, common usages of the errno can now be
+avoided.  For example, the following code written for Python 3.2:
+can now be written without the errno import and without manual
+inspection of exception attributes:
+See also
+PEP 380 adds the yield from expression, allowing a generator to
+delegate
+part of its operations to another generator. This allows a section of code
+containing yield to be factored out and placed in another generator.
+Additionally, the subgenerator is allowed to return with a value, and the
+value is made available to the delegating generator.
+While designed primarily for use in delegating to a subgenerator, the yield
+from expression actually allows delegation to arbitrary subiterators.
+For simple iterators, yield from iterable is essentially just a shortened
+form of for item in iterable: yield item:
+However, unlike an ordinary loop, yield from allows subgenerators to
+receive sent and thrown values directly from the calling scope, and
+return a final value to the outer generator:
+The main principle driving this change is to allow even generators that are
+designed to be used with the send and throw methods to be split into
+multiple subgenerators as easily as a single large function can be split into
+multiple subfunctions.
+See also
+PEP 409 introduces new syntax that allows the display of the chained
+exception context to be disabled. This allows cleaner error messages in
+applications that convert between exception types:
+Without the from None suffix to suppress the cause, the original
+exception would be displayed by default:
+No debugging capability is lost, as the original exception context remains
+available if needed (for example, if an intervening library has incorrectly
+suppressed valuable underlying details):
+See also
+To ease the transition from Python 2 for Unicode aware Python applications
+that make heavy use of Unicode literals, Python 3.3 once again supports the
+“u” prefix for string literals. This prefix has no semantic significance
+in Python 3, it is provided solely to reduce the number of purely mechanical
+changes in migrating to Python 3, making it easier for developers to focus on
+the more significant semantic changes (such as the stricter default
+separation of binary and text data).
+See also
+Functions and class objects have a new __qualname__ attribute representing
+the “path” from the module top-level to their definition.  For global functions
+and classes, this is the same as __name__.  For other functions and classes,
+it provides better information about where they were actually defined, and
+how they might be accessible from the global scope.
+Example with (non-bound) methods:
+Example with nested classes:
+Example with nested functions:
+The string representation of those objects is also changed to include the
+new, more precise information:
+See also
+Dictionaries used for the storage of objects’ attributes are now able to
+share part of their internal storage between each other (namely, the part
+which stores the keys and their respective hashes).  This reduces the memory
+consumption of programs creating many instances of non-builtin types.
+See also
+A new function inspect.signature() makes introspection of python
+callables easy and straightforward.  A broad range of callables is supported:
+python functions, decorated or not, classes, and functools.partial()
+objects.  New classes inspect.Signature, inspect.Parameter
+and inspect.BoundArguments hold information about the call signatures,
+such as, annotations, default values, parameters kinds, and bound arguments,
+which considerably simplifies writing decorators and any code that validates
+or amends calling signatures or arguments.
+See also
+A new attribute on the sys module exposes details specific to the
+implementation of the currently running interpreter.  The initial set of
+attributes on sys.implementation are name, version,
+hexversion, and cache_tag.
+The intention of sys.implementation is to consolidate into one namespace
+the implementation-specific data used by the standard library.  This allows
+different Python implementations to share a single standard library code base
+much more easily.  In its initial state, sys.implementation holds only a
+small portion of the implementation-specific data.  Over time that ratio will
+shift in order to make the standard library more portable.
+One example of improved standard library portability is cache_tag.  As of
+Python 3.3, sys.implementation.cache_tag is used by importlib to
+support PEP 3147 compliance.  Any Python implementation that uses
+importlib for its built-in import system may use cache_tag to control
+the caching behavior for modules.
+The implementation of sys.implementation also introduces a new type to
+Python: types.SimpleNamespace.  In contrast to a mapping-based
+namespace, like dict, SimpleNamespace is attribute-based, like
+object.  However, unlike object, SimpleNamespace instances
+are writable.  This means that you can add, remove, and modify the namespace
+through normal attribute access.
+See also
+issue 2377 - Replace __import__ w/ importlib.__import__
+issue 13959 - Re-implement parts of imp in pure Python
+issue 14605 - Make import machinery explicit
+issue 14646 - Require loaders set __loader__ and __package__
+The __import__() function is now powered by importlib.__import__().
+This work leads to the completion of “phase 2” of PEP 302. There are
+multiple benefits to this change. First, it has allowed for more of the
+machinery powering import to be exposed instead of being implicit and hidden
+within the C code. It also provides a single implementation for all Python VMs
+supporting Python 3.3 to use, helping to end any VM-specific deviations in
+import semantics. And finally it eases the maintenance of import, allowing for
+future growth to occur.
+For the common user, there should be no visible change in semantics.  For
+those whose code currently manipulates import or calls import
+programmatically, the code changes that might possibly be required are covered
+in the Porting Python code section of this document.
+One of the large benefits of this work is the exposure of what goes into
+making the import statement work. That means the various importers that were
+once implicit are now fully exposed as part of the importlib package.
+The abstract base classes defined in importlib.abc have been expanded
+to properly delineate between meta path finders
+and path entry finders by introducing
+importlib.abc.MetaPathFinder and
+importlib.abc.PathEntryFinder, respectively. The old ABC of
+importlib.abc.Finder is now only provided for backwards-compatibility
+and does not enforce any method requirements.
+In terms of finders, importlib.machinery.FileFinder exposes the
+mechanism used to search for source and bytecode files of a module. Previously
+this class was an implicit member of sys.path_hooks.
+For loaders, the new abstract base class importlib.abc.FileLoader helps
+write a loader that uses the file system as the storage mechanism for a module’s
+code. The loader for source files
+(importlib.machinery.SourceFileLoader), sourceless bytecode files
+(importlib.machinery.SourcelessFileLoader), and extension modules
+(importlib.machinery.ExtensionFileLoader) are now available for
+direct use.
+ImportError now has name and path attributes which are set when
+there is relevant data to provide. The message for failed imports will also
+provide the full name of the module now instead of just the tail end of the
+module’s name.
+The importlib.invalidate_caches() function will now call the method with
+the same name on all finders cached in sys.path_importer_cache to help
+clean up any stored state as necessary.
+For potential required changes to code, see the Porting Python code
+section.
+Beyond the expanse of what importlib now exposes, there are other
+visible changes to import. The biggest is that sys.meta_path and
+sys.path_hooks now store all of the meta path finders and path entry
+hooks used by import.  Previously the finders were implicit and hidden within
+the C code of import instead of being directly exposed. This means that one can
+now easily remove or change the order of the various finders to fit one’s needs.
+Another change is that all modules have a __loader__ attribute, storing the
+loader used to create the module. PEP 302 has been updated to make this
+attribute mandatory for loaders to implement, so in the future once 3rd-party
+loaders have been updated people will be able to rely on the existence of the
+attribute. Until such time, though, import is setting the module post-load.
+Loaders are also now expected to set the __package__ attribute from
+PEP 366. Once again, import itself is already setting this on all loaders
+from importlib and import itself is setting the attribute post-load.
+None is now inserted into sys.path_importer_cache when no finder
+can be found on sys.path_hooks. Since imp.NullImporter is not
+directly exposed on sys.path_hooks it could no longer be relied upon to
+always be available to use as a value representing no finder found.
+All other changes relate to semantic changes which should be taken into
+consideration when updating code for Python 3.3, and thus should be read about
+in the Porting Python code section of this document.
+(Implementation by Brett Cannon)
+Some smaller changes made to the core Python language are:
+Added support for Unicode name aliases and named sequences.
+Both unicodedata.lookup() and '\N{...}' now resolve name aliases,
+and unicodedata.lookup() resolves named sequences too.
+(Contributed by Ezio Melotti in issue 12753.)
+Unicode database updated to UCD version 6.1.0
+Equality comparisons on range() objects now return a result reflecting
+the equality of the underlying sequences generated by those range objects.
+(issue 13201)
+The count(), find(), rfind(), index() and rindex()
+methods of bytes and bytearray objects now accept an
+integer between 0 and 255 as their first argument.
+(Contributed by Petri Lehtinen in issue 12170.)
+The rjust(), ljust(), and center() methods of bytes
+and bytearray now accept a bytearray for the fill
+argument.  (Contributed by Petri Lehtinen in issue 12380.)
+New methods have been added to list and bytearray:
+copy() and clear() (issue 10516).  Consequently,
+MutableSequence now also defines a
+clear() method (issue 11388).
+Raw bytes literals can now be written rb"..." as well as br"...".
+(Contributed by Antoine Pitrou in issue 13748.)
+dict.setdefault() now does only one lookup for the given key, making
+it atomic when used with built-in types.
+(Contributed by Filip Gruszczyński in issue 13521.)
+The error messages produced when a function call does not match the function
+signature have been significantly improved.
+(Contributed by Benjamin Peterson.)
+Previous versions of CPython have always relied on a global import lock.
+This led to unexpected annoyances, such as deadlocks when importing a module
+would trigger code execution in a different thread as a side-effect.
+Clumsy workarounds were sometimes employed, such as the
+PyImport_ImportModuleNoBlock() C API function.
+In Python 3.3, importing a module takes a per-module lock.  This correctly
+serializes importation of a given module from multiple threads (preventing
+the exposure of incompletely initialized modules), while eliminating the
+aforementioned annoyances.
+(Contributed by Antoine Pitrou in issue 9260.)
+This new debug module faulthandler contains functions to dump Python tracebacks explicitly,
+on a fault (a crash like a segmentation fault), after a timeout, or on a user
+signal. Call faulthandler.enable() to install fault handlers for the
+SIGSEGV, SIGFPE, SIGABRT, SIGBUS, and
+SIGILL signals. You can also enable them at startup by setting the
+PYTHONFAULTHANDLER environment variable or by using -X
+faulthandler command line option.
+Example of a segmentation fault on Linux:
+The new ipaddress module provides tools for creating and manipulating
+objects representing IPv4 and IPv6 addresses, networks and interfaces (i.e.
+an IP address associated with a specific IP subnet).
+(Contributed by Google and Peter Moody in PEP 3144.)
+The newly-added lzma module provides data compression and decompression
+using the LZMA algorithm, including support for the .xz and .lzma
+file formats.
+(Contributed by Nadeem Vawda and Per Øyvind Karlsen in issue 6715.)
+Improved support for abstract base classes containing descriptors composed with
+abstract methods. The recommended approach to declaring abstract descriptors is
+now to provide __isabstractmethod__ as a dynamically updated
+property. The built-in descriptors have been updated accordingly.
+(Contributed by Darren Dale in issue 11610.)
+abc.ABCMeta.register() now returns the registered subclass, which means
+it can now be used as a class decorator (issue 10868).
+The array module supports the long long type using q and
+Q type codes.
+(Contributed by Oren Tirosh and Hirokazu Yamamoto in issue 1172711.)
+ASCII-only Unicode strings are now accepted by the decoding functions of the
+base64 modern interface. For example, base64.b64decode('YWJj')
+returns b'abc'.  (Contributed by Catalin Iacob in issue 13641.)
+In addition to the binary objects they normally accept, the a2b_ functions
+now all also accept ASCII-only strings as input.  (Contributed by Antoine
+Pitrou in issue 13637.)
+The bz2 module has been rewritten from scratch. In the process, several
+new features have been added:
+New bz2.open() function: open a bzip2-compressed file in binary or
+text mode.
+bz2.BZ2File can now read from and write to arbitrary file-like
+objects, by means of its constructor’s fileobj argument.
+(Contributed by Nadeem Vawda in issue 5863.)
+bz2.BZ2File and bz2.decompress() can now decompress
+multi-stream inputs (such as those produced by the pbzip2 tool).
+bz2.BZ2File can now also be used to create this type of file, using
+the 'a' (append) mode.
+(Contributed by Nir Aides in issue 1625.)
+bz2.BZ2File now implements all of the io.BufferedIOBase API,
+except for the detach() and truncate() methods.
+The mbcs codec has been rewritten to handle correctly
+replace and ignore error handlers on all Windows versions.  The
+mbcs codec now supports all error handlers, instead of only
+replace to encode and ignore to decode.
+A new Windows-only codec has been added: cp65001 (issue 13216). It is the
+Windows code page 65001 (Windows UTF-8, CP_UTF8).  For example, it is used
+by sys.stdout if the console output code page is set to cp65001 (e.g., using
+chcp 65001 command).
+Multibyte CJK decoders now resynchronize faster.  They only ignore the first
+byte of an invalid byte sequence. For example, b'\xff\n'.decode('gb2312',
+'replace') now returns a \n after the replacement character.
+(issue 12016)
+Incremental CJK codec encoders are no longer reset at each call to their
+encode() methods. For example:
+This example gives b'~{Np~}~{J)~}~{l6~}~{HK~}~{!#~} Bye.' with older Python
+versions.
+(issue 12100)
+The unicode_internal codec has been deprecated.
+Addition of a new ChainMap class to allow treating a
+number of mappings as a single unit.  (Written by Raymond Hettinger for
+issue 11089, made public in issue 11297.)
+The abstract base classes have been moved in a new collections.abc
+module, to better differentiate between the abstract and the concrete
+collections classes.  Aliases for ABCs are still present in the
+collections module to preserve existing imports.  (issue 11085)
+The Counter class now supports the unary + and -
+operators, as well as the in-place operators +=, -=, |=, and
+&=.  (Contributed by Raymond Hettinger in issue 13121.)
+ExitStack now provides a solid foundation for
+programmatic manipulation of context managers and similar cleanup
+functionality. Unlike the previous contextlib.nested API (which was
+deprecated and removed), the new API is designed to work correctly
+regardless of whether context managers acquire their resources in
+their __init__ method (for example, file objects) or in their
+__enter__ method (for example, synchronisation objects from the
+threading module).
+(issue 13585)
+Addition of salt and modular crypt format (hashing method) and the mksalt()
+function to the crypt module.
+(issue 10924)
+(Contributed by Iñigo Serna in issue 6755.)
+The new C version of the decimal module integrates the high speed libmpdec
+library for arbitrary precision correctly-rounded decimal floating point
+arithmetic. libmpdec conforms to IBM’s General Decimal Arithmetic Specification.
+Performance gains range from 10x for database applications to 100x for
+numerically intensive applications. These numbers are expected gains
+for standard precisions used in decimal floating point arithmetic. Since
+the precision is user configurable, the exact figures may vary. For example,
+in integer bignum arithmetic the differences can be significantly higher.
+The following table is meant as an illustration. Benchmarks are available
+at http://www.bytereef.org/mpdecimal/quickstart.html.
+The C module has the following context limits, depending on the machine
+architecture:
+In the context templates (DefaultContext,
+BasicContext and ExtendedContext)
+the magnitude of Emax and
+Emin has changed to 999999.
+The Decimal constructor in decimal.py does not observe
+the context limits and converts values with arbitrary exponents or precision
+exactly. Since the C version has internal limits, the following scheme is
+used: If possible, values are converted exactly, otherwise
+InvalidOperation is raised and the result is NaN. In the
+latter case it is always possible to use create_decimal()
+in order to obtain a rounded or inexact value.
+The power function in decimal.py is always correctly-rounded. In the
+C version, it is defined in terms of the correctly-rounded
+exp() and ln() functions,
+but the final result is only “almost always correctly rounded”.
+In the C version, the context dictionary containing the signals is a
+MutableMapping.  For speed reasons,
+flags and traps always
+refer to the same MutableMapping that the context
+was initialized with. If a new signal dictionary is assigned,
+flags and traps
+are updated with the new values, but they do not reference the RHS
+dictionary.
+Pickling a Context produces a different output in order
+to have a common interchange format for the Python and C versions.
+The order of arguments in the Context constructor has been
+changed to match the order displayed by repr().
+The watchexp parameter in the quantize() method
+is deprecated.
+The email package now has a policy framework.  A
+Policy is an object with several methods and properties
+that control how the email package behaves.  The primary policy for Python 3.3
+is the Compat32 policy, which provides backward
+compatibility with the email package in Python 3.2.  A policy can be
+specified when an email message is parsed by a parser, or when a
+Message object is created, or when an email is
+serialized using a generator.  Unless overridden, a policy passed
+to a parser is inherited by all the Message object and sub-objects
+created by the parser.  By default a generator will use the policy of
+the Message object it is serializing.  The default policy is
+compat32.
+The minimum set of controls implemented by all policy objects are:
+A new policy instance, with new settings, is created using the
+clone() method of policy objects.  clone takes
+any of the above controls as keyword arguments.  Any control not specified in
+the call retains its default value.  Thus you can create a policy that uses
+\r\n linesep characters like this:
+Policies can be used to make the generation of messages in the format needed by
+your application simpler.  Instead of having to remember to specify
+linesep='\r\n' in all the places you call a generator, you can specify
+it once, when you set the policy used by the parser or the Message,
+whichever your program uses to create Message objects.  On the other hand,
+if you need to generate messages in multiple forms, you can still specify the
+parameters in the appropriate generator call.  Or you can have custom
+policy instances for your different cases, and pass those in when you create
+the generator.
+While the policy framework is worthwhile all by itself, the main motivation for
+introducing it is to allow the creation of new policies that implement new
+features for the email package in a way that maintains backward compatibility
+for those who do not use the new policies.  Because the new policies introduce a
+new API, we are releasing them in Python 3.3 as a provisional policy.  Backwards incompatible changes (up to and including
+removal of the code) may occur if deemed necessary by the core developers.
+The new policies are instances of EmailPolicy,
+and add the following additional controls:
+The header_factory is the key to the new features provided by the new
+policies.  When one of the new policies is used, any header retrieved from
+a Message object is an object produced by the header_factory, and any
+time you set a header on a Message it becomes an object produced by
+header_factory.  All such header objects have a name attribute equal
+to the header name.  Address and Date headers have additional attributes
+that give you access to the parsed data of the header.  This means you can now
+do things like this:
+You will note that the unicode display name is automatically encoded as
+utf-8 when the message is serialized, but that when the header is accessed
+directly, you get the unicode version.  This eliminates any need to deal with
+the email.header decode_header() or
+make_header() functions.
+You can also create addresses from parts:
+Decoding to unicode is done automatically:
+When you parse a message, you can use the addresses and groups
+attributes of the header objects to access the groups and individual
+addresses:
+In summary, if you use one of the new policies, header manipulation works the
+way it ought to:  your application works with unicode strings, and the email
+package transparently encodes and decodes the unicode to and from the RFC
+standard Content Transfer Encodings.
+New BytesHeaderParser, added to the parser
+module to complement HeaderParser and complete the Bytes
+API.
+New utility functions:
+The functools.lru_cache() decorator now accepts a typed keyword
+argument (that defaults to False to ensure that it caches values of
+different types that compare equal in separate cache slots.  (Contributed
+by Raymond Hettinger in issue 13227.)
+It is now possible to register callbacks invoked by the garbage collector
+before and after collection using the new callbacks list.
+A new compare_digest() function has been added to prevent side
+channel attacks on digests through timing analysis.  (Contributed by Nick
+Coghlan and Christian Heimes in issue 15061.)
+http.server.BaseHTTPRequestHandler now buffers the headers and writes
+them all at once when end_headers() is
+called.  A new method flush_headers()
+can be used to directly manage when the accumlated headers are sent.
+(Contributed by Andrew Schaaf in issue 3709.)
+http.server now produces valid HTML 4.01 strict output.
+(Contributed by Ezio Melotti in issue 13295.)
+http.client.HTTPResponse now has a
+readinto() method, which means it can be used
+as an io.RawIOBase class.  (Contributed by John Kuhn in
+issue 13464.)
+html.parser.HTMLParser is now able to parse broken markup without
+raising errors, therefore the strict argument of the constructor and the
+HTMLParseError exception are now deprecated.
+The ability to parse broken markup is the result of a number of bug fixes that
+are also available on the latest bug fix releases of Python 2.7/3.2.
+(Contributed by Ezio Melotti in issue 15114, and issue 14538,
+issue 13993, issue 13960, issue 13358, issue 1745761,
+issue 755670, issue 13357, issue 12629, issue 1200313,
+issue 670664, issue 13273, issue 12888, issue 7311.)
+A new html5 dictionary that maps HTML5 named character
+references to the equivalent Unicode character(s) (e.g. html5['gt;'] ==
+'>') has been added to the html.entities module.  The dictionary is
+now also used by HTMLParser.  (Contributed by Ezio
+Melotti in issue 11113 and issue 15156.)
+The IMAP4_SSL constructor now accepts an SSLContext
+parameter to control parameters of the secure channel.
+(Contributed by Sijin Joseph in issue 8808.)
+A new getclosurevars() function has been added. This function
+reports the current binding of all names referenced from the function body and
+where those names were resolved, making it easier to verify correct internal
+state when testing code that relies on stateful closures.
+(Contributed by Meador Inge and Nick Coghlan in issue 13062.)
+A new getgeneratorlocals() function has been added. This
+function reports the current binding of local variables in the generator’s
+stack frame, making it easier to verify correct internal state when testing
+generators.
+(Contributed by Meador Inge in issue 15153.)
+The open() function has a new 'x' mode that can be used to
+exclusively create a new file, and raise a FileExistsError if the file
+already exists. It is based on the C11 ‘x’ mode to fopen().
+(Contributed by David Townshend in issue 12760.)
+The constructor of the TextIOWrapper class has a new
+write_through optional argument. If write_through is True, calls to
+write() are guaranteed not to be buffered: any data
+written on the TextIOWrapper object is immediately handled to its
+underlying binary buffer.
+accumulate() now takes an optional func argument for
+providing a user-supplied binary function.
+The basicConfig() function now supports an optional handlers
+argument taking an iterable of handlers to be added to the root logger.
+A class level attribute append_nul has
+been added to SysLogHandler to allow control of the
+appending of the NUL (\000) byte to syslog records, since for some
+deamons it is required while for others it is passed through to the log.
+The math module has a new function, log2(),  which returns
+the base-2 logarithm of x.
+(Written by Mark Dickinson in issue 11888.)
+The read() method is now more compatible with other file-like
+objects: if the argument is omitted or specified as None, it returns the
+bytes from the current file position to the end of the mapping.  (Contributed
+by Petri Lehtinen in issue 12021.)
+The new multiprocessing.connection.wait() function allows polling
+multiple objects (such as connections, sockets and pipes) with a timeout.
+(Contributed by Richard Oudkerk in issue 12328.)
+multiprocessing.Connection objects can now be transferred over
+multiprocessing connections.
+(Contributed by Richard Oudkerk in issue 4892.)
+multiprocessing.Process now accepts a daemon keyword argument
+to override the default behavior of inheriting the daemon flag from
+the parent process (issue 6064).
+New attribute multiprocessing.Process.sentinel allows a
+program to wait on multiple Process objects at one
+time using the appropriate OS primitives (for example, select on
+posix systems).
+New methods multiprocessing.pool.Pool.starmap() and
+starmap_async() provide
+itertools.starmap() equivalents to the existing
+multiprocessing.pool.Pool.map() and
+map_async() functions.  (Contributed by Hynek
+Schlawack in issue 12708.)
+The nntplib.NNTP class now supports the context management protocol to
+unconditionally consume socket.error exceptions and to close the NNTP
+connection when done:
+(Contributed by Giampaolo Rodolà in issue 9795.)
+The os module has a new pipe2() function that makes it
+possible to create a pipe with O_CLOEXEC or
+O_NONBLOCK flags set atomically. This is especially useful to
+avoid race conditions in multi-threaded programs.
+The os module has a new sendfile() function which provides
+an efficient “zero-copy” way for copying data from one file (or socket)
+descriptor to another. The phrase “zero-copy” refers to the fact that all of
+the copying of data between the two descriptors is done entirely by the
+kernel, with no copying of data into userspace buffers. sendfile()
+can be used to efficiently copy data from a file on disk to a network socket,
+e.g. for downloading a file.
+(Patch submitted by Ross Lagerwall and Giampaolo Rodolà in issue 10882.)
+To avoid race conditions like symlink attacks and issues with temporary
+files and directories, it is more reliable (and also faster) to manipulate
+file descriptors instead of file names. Python 3.3 enhances existing functions
+and introduces new functions to work on file descriptors (issue 4761,
+issue 10755 and issue 14626).
+access() accepts an effective_ids keyword argument to turn on
+using the effective uid/gid rather than the real uid/gid in the access check.
+Platform support for this can be checked via the
+supports_effective_ids set.
+The os module has two new functions: getpriority() and
+setpriority(). They can be used to get or set process
+niceness/priority in a fashion similar to os.nice() but extended to all
+processes instead of just the current one.
+(Patch submitted by Giampaolo Rodolà in issue 10784.)
+The new os.replace() function allows cross-platform renaming of a
+file with overwriting the destination.  With os.rename(), an existing
+destination file is overwritten under POSIX, but raises an error under
+Windows.
+(Contributed by Antoine Pitrou in issue 8828.)
+The stat family of functions (stat(), fstat(),
+and lstat()) now support reading a file’s timestamps
+with nanosecond precision.  Symmetrically, utime()
+can now write file timestamps with nanosecond precision.  (Contributed by
+Larry Hastings in issue 14127.)
+The new os.get_terminal_size() function queries the size of the
+terminal attached to a file descriptor. See also
+shutil.get_terminal_size().
+(Contributed by Zbigniew Jędrzejewski-Szmek in issue 13609.)
+Tab-completion is now available not only for command names, but also their
+arguments.  For example, for the break command, function and file names
+are completed.
+(Contributed by Georg Brandl in issue 14210)
+pickle.Pickler objects now have an optional
+dispatch_table attribute allowing per-pickler
+reduction functions to be set.
+(Contributed by Richard Oudkerk in issue 14166.)
+The Tk GUI and the serve() function have been removed from the
+pydoc module: pydoc -g and serve() have been deprecated
+in Python 3.2.
+str regular expressions now support \u and \U escapes.
+(Contributed by Serhiy Storchaka in issue 3665.)
+Solaris and derivative platforms have a new class select.devpoll
+for high performance asynchronous sockets via /dev/poll.
+(Contributed by Jesús Cea Avión in issue 6397.)
+The previously undocumented helper function quote from the
+pipes modules has been moved to the shlex module and
+documented.  quote() properly escapes all characters in a string
+that might be otherwise given special meaning by the shell.
+The smtpd module now supports RFC 5321 (extended SMTP) and RFC 1870
+(size extension).  Per the standard, these extensions are enabled if and only
+if the client initiates the session with an EHLO command.
+(Initial ELHO support by Alberto Trevino.  Size extension by Juhana
+Jauhiainen.  Substantial additional work on the patch contributed by Michele
+Orrù and Dan Boswell.  issue 8739)
+The SMTP, SMTP_SSL, and
+LMTP classes now accept a source_address keyword argument
+to specify the (host, port) to use as the source address in the bind call
+when creating the outgoing socket.  (Contributed by Paulo Scardine in
+issue 11281.)
+SMTP now supports the context management protocol, allowing an
+SMTP instance to be used in a with statement.  (Contributed
+by Giampaolo Rodolà in issue 11289.)
+The SMTP_SSL constructor and the starttls()
+method now accept an SSLContext parameter to control parameters of the secure
+channel.  (Contributed by Kasun Herath in issue 8809.)
+The socket class now exposes additional methods to process
+ancillary data when supported by the underlying platform:
+(Contributed by David Watson in issue 6560, based on an earlier patch by
+Heiko Wundram)
+The socket class now supports the PF_CAN protocol family
+(https://en.wikipedia.org/wiki/Socketcan), on Linux
+(https://lwn.net/Articles/253425).
+(Contributed by Matthias Fuchs, updated by Tiago Gonçalves in issue 10141.)
+The socket class now supports the PF_RDS protocol family
+(https://en.wikipedia.org/wiki/Reliable_Datagram_Sockets and
+https://oss.oracle.com/projects/rds/).
+The socket class now supports the PF_SYSTEM protocol
+family on OS X.  (Contributed by Michael Goderbauer in issue 13777.)
+New function sethostname() allows the hostname to be set
+on unix systems if the calling process has sufficient privileges.
+(Contributed by Ross Lagerwall in issue 10866.)
+BaseServer now has an overridable method
+service_actions() that is called by the
+serve_forever() method in the service loop.
+ForkingMixIn now uses this to clean up zombie
+child processes.  (Contributed by Justin Warkentin in issue 11109.)
+New sqlite3.Connection method
+set_trace_callback() can be used to capture a trace of
+all sql commands processed by sqlite.  (Contributed by Torsten Landschoff
+in issue 11688.)
+The ssl module has two new random generation functions:
+(Contributed by Victor Stinner in issue 12049.)
+The ssl module now exposes a finer-grained exception hierarchy
+in order to make it easier to inspect the various kinds of errors.
+(Contributed by Antoine Pitrou in issue 11183.)
+load_cert_chain() now accepts a password argument
+to be used if the private key is encrypted.
+(Contributed by Adam Simpkins in issue 12803.)
+Diffie-Hellman key exchange, both regular and Elliptic Curve-based, is
+now supported through the load_dh_params() and
+set_ecdh_curve() methods.
+(Contributed by Antoine Pitrou in issue 13626 and issue 13627.)
+SSL sockets have a new get_channel_binding() method
+allowing the implementation of certain authentication mechanisms such as
+SCRAM-SHA-1-PLUS.  (Contributed by Jacek Konieczny in issue 12551.)
+You can query the SSL compression algorithm used by an SSL socket, thanks
+to its new compression() method.  The new attribute
+OP_NO_COMPRESSION can be used to disable compression.
+(Contributed by Antoine Pitrou in issue 13634.)
+Support has been added for the Next Procotol Negotiation extension using
+the ssl.SSLContext.set_npn_protocols() method.
+(Contributed by Colin Marc in issue 14204.)
+SSL errors can now be introspected more easily thanks to
+library and reason attributes.
+(Contributed by Antoine Pitrou in issue 14837.)
+The get_server_certificate() function now supports IPv6.
+(Contributed by Charles-François Natali in issue 11811.)
+New attribute OP_CIPHER_SERVER_PREFERENCE allows setting
+SSLv3 server sockets to use the server’s cipher ordering preference rather
+than the client’s (issue 13635).
+The undocumented tarfile.filemode function has been moved to
+stat.filemode(). It can be used to convert a file’s mode to a string of
+the form ‘-rwxrwxrwx’.
+(Contributed by Giampaolo Rodolà in issue 14807.)
+The struct module now supports ssize_t and size_t via the
+new codes n and N, respectively.  (Contributed by Antoine Pitrou
+in issue 3163.)
+Command strings can now be bytes objects on posix platforms.  (Contributed by
+Victor Stinner in issue 8513.)
+A new constant DEVNULL allows suppressing output in a
+platform-independent fashion.  (Contributed by Ross Lagerwall in
+issue 5870.)
+The sys module has a new thread_info struct
+sequence holding informations about the thread implementation
+(issue 11223).
+tarfile now supports lzma encoding via the lzma module.
+(Contributed by Lars Gustäbel in issue 5689.)
+tempfile.SpooledTemporaryFile‘s
+truncate() method now accepts
+a size parameter.  (Contributed by Ryan Kelly in issue 9957.)
+The textwrap module has a new indent() that makes
+it straightforward to add a common prefix to selected lines in a block
+of text  (issue 13857).
+threading.Condition, threading.Semaphore,
+threading.BoundedSemaphore, threading.Event, and
+threading.Timer, all of which used to be factory functions returning a
+class instance, are now classes and may be subclassed.  (Contributed by Éric
+Araujo in issue 10968.)
+The threading.Thread constructor now accepts a daemon keyword
+argument to override the default behavior of inheriting the deamon flag
+value from the parent thread (issue 6064).
+The formerly private function _thread.get_ident is now available as the
+public function threading.get_ident().  This eliminates several cases of
+direct access to the _thread module in the stdlib.  Third party code that
+used _thread.get_ident should likewise be changed to use the new public
+interface.
+The PEP 418 added new functions to the time module:
+Other new functions:
+To improve cross platform consistency, sleep() now raises a
+ValueError when passed a negative sleep value.  Previously this was an
+error on posix, but produced an infinite sleep on Windows.
+Add a new types.MappingProxyType class: Read-only proxy of a mapping.
+(issue 14386)
+The new functions types.new_class() and types.prepare_class() provide support
+for PEP 3115 compliant dynamic type creation. (issue 14588)
+assertRaises(), assertRaisesRegex(), assertWarns(), and
+assertWarnsRegex() now accept a keyword argument msg when used as
+context managers.  (Contributed by Ezio Melotti and Winston Ewert in
+issue 10775.)
+unittest.TestCase.run() now returns the TestResult
+object.
+The Request class, now accepts a method argument
+used by get_method() to determine what HTTP method
+should be used.  For example, this will send a 'HEAD' request:
+(issue 1673007)
+The webbrowser module supports more “browsers”: Google Chrome (named
+chrome, chromium, chrome-browser or
+chromium-browser depending on the version and operating system),
+and the generic launchers xdg-open, from the FreeDesktop.org
+project, and gvfs-open, which is the default URI handler for GNOME
+3.  (The former contributed by Arnaud Calmettes in issue 13620, the latter
+by Matthias Klose in issue 14493.)
+The xml.etree.ElementTree module now imports its C accelerator by
+default; there is no longer a need to explicitly import
+xml.etree.cElementTree (this module stays for backwards compatibility,
+but is now deprecated).  In addition,  the iter family of methods of
+Element has been optimized (rewritten in C).
+The module’s documentation has also been greatly improved with added examples
+and a more detailed reference.
+New attribute zlib.Decompress.eof makes it possible to distinguish
+between a properly-formed compressed stream and an incomplete or truncated one.
+(Contributed by Nadeem Vawda in issue 12646.)
+New attribute zlib.ZLIB_RUNTIME_VERSION reports the version string of
+the underlying zlib library that is loaded at runtime.  (Contributed by
+Torsten Landschoff in issue 12306.)
+Major performance enhancements have been added:
+Thanks to PEP 393, some operations on Unicode strings have been optimized:
+UTF-8 is now 2x to 4x faster.  UTF-16 encoding is now up to 10x faster.
+(Contributed by Serhiy Storchaka, issue 14624, issue 14738 and
+issue 15026.)
+Changes to Python’s build process and to the C API include:
+OS/2 and VMS are no longer supported due to the lack of a maintainer.
+Windows 2000 and Windows platforms which set COMSPEC to command.com
+are no longer supported due to maintenance burden.
+OSF support, which was deprecated in 3.2, has been completely removed.
+The Py_UNICODE has been deprecated by PEP 393 and will be
+removed in Python 4. All functions using this type are deprecated:
+Unicode functions and methods using Py_UNICODE and
+Py_UNICODE* types:
+Functions and macros manipulating Py_UNICODE* strings:
+Encoders:
+The array module’s 'u' format code is now deprecated and will be
+removed in Python 4 together with the rest of the (Py_UNICODE) API.
+This section lists previously described changes and other bugfixes
+that may require changes to your code.
+In the course of changes to the buffer API the undocumented
+smalltable member of the
+Py_buffer structure has been removed and the
+layout of the PyMemoryViewObject has changed.
+All extensions relying on the relevant parts in memoryobject.h
+or object.h must be rebuilt.
+Due to PEP 393, the Py_UNICODE type and all
+functions using this type are deprecated (but will stay available for
+at least five years).  If you were using low-level Unicode APIs to
+construct and access unicode objects and you want to benefit of the
+memory footprint reduction provided by PEP 393, you have to convert
+your code to the new Unicode API.
+However, if you only have been using high-level functions such as
+PyUnicode_Concat(), PyUnicode_Join() or
+PyUnicode_FromFormat(), your code will automatically take
+advantage of the new unicode representations.
+PyImport_GetMagicNumber() now returns -1 upon failure.
+As a negative value for the level argument to __import__() is no
+longer valid, the same now holds for PyImport_ImportModuleLevel().
+This also means that the value of level used by
+PyImport_ImportModuleEx() is now 0 instead of -1.
+The range of possible file names for C extensions has been narrowed.
+Very rarely used spellings have been suppressed: under POSIX, files
+named xxxmodule.so, xxxmodule.abi3.so and
+xxxmodule.cpython-*.so are no longer recognized as implementing
+the xxx module.  If you had been generating such files, you have
+to switch to the other spellings (i.e., remove the module string
+from the file names).
+(implemented in issue 14040.)
+The -Q command-line flag and related artifacts have been removed.  Code
+checking sys.flags.division_warning will need updating.
+(issue 10998, contributed by Éric Araujo.)
+When python is started with -S, import site
+will no longer add site-specific paths to the module search paths.  In
+previous versions, it did.
+(issue 11591, contributed by Carl Meyer with editions by Éric Araujo.)
+What’s New In Python 3.4
+What’s New In Python 3.2
+
+    Enter search terms or a module, class or function name.
+    
+

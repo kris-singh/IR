@@ -1,0 +1,94 @@
+URL: https://docs.python.org/3/library/shelve.html
+
+Title: 12.3. shelve — Python object persistence — Python 3.5.2 documentation
+
+Doc Id: 94
+
+Meta Tags : No meta tag found in document
+
+Date :Jul 01, 2016
+
+Content :Source code: Lib/shelve.py
+A “shelf” is a persistent, dictionary-like object.  The difference with “dbm”
+databases is that the values (not the keys!) in a shelf can be essentially
+arbitrary Python objects — anything that the pickle module can handle.
+This includes most class instances, recursive data types, and objects containing
+lots of shared  sub-objects.  The keys are ordinary strings.
+Open a persistent dictionary.  The filename specified is the base filename for
+the underlying database.  As a side-effect, an extension may be added to the
+filename and more than one file may be created.  By default, the underlying
+database file is opened for reading and writing.  The optional flag parameter
+has the same interpretation as the flag parameter of dbm.open().
+By default, version 3 pickles are used to serialize values.  The version of the
+pickle protocol can be specified with the protocol parameter.
+Because of Python semantics, a shelf cannot know when a mutable
+persistent-dictionary entry is modified.  By default modified objects are
+written only when assigned to the shelf (see Example).  If the
+optional writeback parameter is set to True, all entries accessed are also
+cached in memory, and written back on sync() and
+close(); this can make it handier to mutate mutable entries in
+the persistent dictionary, but, if many entries are accessed, it can consume
+vast amounts of memory for the cache, and it can make the close operation
+very slow since all accessed entries are written back (there is no way to
+determine which accessed entries are mutable, nor which ones were actually
+mutated).
+Note
+Do not rely on the shelf being closed automatically; always call
+close() explicitly when you don’t need it any more, or
+use shelve.open() as a context manager:
+Warning
+Because the shelve module is backed by pickle, it is insecure
+to load a shelf from an untrusted source.  Like with pickle, loading a shelf
+can execute arbitrary code.
+Shelf objects support all methods supported by dictionaries.  This eases the
+transition from dictionary based scripts to those requiring persistent storage.
+Two additional methods are supported:
+Write back all entries in the cache if the shelf was opened with writeback
+set to True.  Also empty the cache and synchronize the persistent
+dictionary on disk, if feasible.  This is called automatically when the shelf
+is closed with close().
+Synchronize and close the persistent dict object.  Operations on a closed
+shelf will fail with a ValueError.
+See also
+Persistent dictionary recipe
+with widely supported storage formats and having the speed of native
+dictionaries.
+A subclass of collections.abc.MutableMapping which stores pickled
+values in the dict object.
+By default, version 3 pickles are used to serialize values.  The version of the
+pickle protocol can be specified with the protocol parameter. See the
+pickle documentation for a discussion of the pickle protocols.
+If the writeback parameter is True, the object will hold a cache of all
+entries accessed and write them back to the dict at sync and close times.
+This allows natural operations on mutable entries, but can consume much more
+memory and make sync and close take a long time.
+The keyencoding parameter is the encoding used to encode keys before they
+are used with the underlying dict.
+A Shelf object can also be used as a context manager, in which
+case it will be automatically closed when the with block ends.
+Changed in version 3.2: Added the keyencoding parameter; previously, keys were always encoded in
+UTF-8.
+Changed in version 3.4: Added context manager support.
+A subclass of Shelf which exposes first(), next(),
+previous(), last() and set_location() which are available
+in the third-party bsddb module from pybsddb but not in other database
+modules.  The dict object passed to the constructor must support those
+methods.  This is generally accomplished by calling one of
+bsddb.hashopen(), bsddb.btopen() or bsddb.rnopen().  The
+optional protocol, writeback, and keyencoding parameters have the same
+interpretation as for the Shelf class.
+A subclass of Shelf which accepts a filename instead of a dict-like
+object.  The underlying file will be opened using dbm.open().  By
+default, the file will be created and opened for both read and write.  The
+optional flag parameter has the same interpretation as for the open()
+function.  The optional protocol and writeback parameters have the same
+interpretation as for the Shelf class.
+To summarize the interface (key is a string, data is an arbitrary
+object):
+See also
+12.2. copyreg — Register pickle support functions
+12.4. marshal — Internal Python object serialization
+
+    Enter search terms or a module, class or function name.
+    
+

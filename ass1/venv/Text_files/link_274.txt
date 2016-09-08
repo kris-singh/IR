@@ -1,0 +1,60 @@
+URL: https://docs.python.org/3/using/scripts.html
+
+Title: 5. Additional Tools and Scripts — Python 3.5.2 documentation
+
+Doc Id: 274
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :Creation of virtual environments is done by executing the
+pyvenv script:
+Running this command creates the target directory (creating any parent
+directories that don’t exist already) and places a pyvenv.cfg file in it
+with a home key pointing to the Python installation the command was run
+from.  It also creates a bin (or Scripts on Windows) subdirectory
+containing a copy of the python binary (or binaries, in the case of
+Windows).  It also creates an (initially empty) lib/pythonX.Y/site-packages
+subdirectory (on Windows, this is Lib\site-packages).
+See also
+Python Packaging User Guide: Creating and using virtual environments
+On Windows, you may have to invoke the pyvenv script as follows, if you
+don’t have the relevant PATH and PATHEXT settings:
+or equivalently:
+The command, if run with -h, will show the available options:
+Depending on how the venv functionality has been invoked, the usage message
+may vary slightly, e.g. referencing pyvenv rather than venv.
+Changed in version 3.4: Installs pip by default, added the --without-pip  and --copies
+options
+Changed in version 3.4: In earlier versions, if the target directory already existed, an error was
+raised, unless the --clear or --upgrade option was provided. Now,
+if an existing directory is specified, its contents are removed and
+the directory is processed as if it had been newly created.
+The created pyvenv.cfg file also includes the
+include-system-site-packages key, set to true if venv is
+run with the --system-site-packages option, false otherwise.
+Unless the --without-pip option is given, ensurepip will be
+invoked to bootstrap pip into the virtual environment.
+Multiple paths can be given to pyvenv, in which case an identical
+virtualenv will be created, according to the given options, at each
+provided path.
+Once a venv has been created, it can be “activated” using a script in the
+venv’s binary directory. The invocation of the script is platform-specific:
+You don’t specifically need to activate an environment; activation just
+prepends the venv’s binary directory to your path, so that “python” invokes the
+venv’s Python interpreter and you can run installed scripts without having to
+use their full path. However, all scripts installed in a venv should be
+runnable without activating it, and run with the venv’s Python automatically.
+You can deactivate a venv by typing “deactivate” in your shell. The exact
+mechanism is platform-specific: for example, the Bash activation script defines
+a “deactivate” function, whereas on Windows there are separate scripts called
+deactivate.bat and Deactivate.ps1 which are installed when the venv is
+created.
+New in version 3.4: fish and csh activation scripts.
+4. Using Python on a Macintosh
+The Python Language Reference
+
+    Enter search terms or a module, class or function name.
+    
+

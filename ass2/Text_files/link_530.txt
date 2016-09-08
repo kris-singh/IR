@@ -1,0 +1,89 @@
+URL: https://docs.python.org/3/c-api/datetime.html
+
+Title: DateTime Objects — Python 3.5.2 documentation
+
+Doc Id: 530
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :Various date and time objects are supplied by the datetime module.
+Before using any of these functions, the header file datetime.h must be
+included in your source (note that this is not included by Python.h),
+and the macro PyDateTime_IMPORT must be invoked, usually as part of
+the module initialisation function.  The macro puts a pointer to a C structure
+into a static variable, PyDateTimeAPI, that is used by the following
+macros.
+Type-check macros:
+Return true if ob is of type PyDateTime_DateType or a subtype of
+PyDateTime_DateType.  ob must not be NULL.
+Return true if ob is of type PyDateTime_DateType. ob must not be
+NULL.
+Return true if ob is of type PyDateTime_DateTimeType or a subtype of
+PyDateTime_DateTimeType.  ob must not be NULL.
+Return true if ob is of type PyDateTime_DateTimeType. ob must not
+be NULL.
+Return true if ob is of type PyDateTime_TimeType or a subtype of
+PyDateTime_TimeType.  ob must not be NULL.
+Return true if ob is of type PyDateTime_TimeType. ob must not be
+NULL.
+Return true if ob is of type PyDateTime_DeltaType or a subtype of
+PyDateTime_DeltaType.  ob must not be NULL.
+Return true if ob is of type PyDateTime_DeltaType. ob must not be
+NULL.
+Return true if ob is of type PyDateTime_TZInfoType or a subtype of
+PyDateTime_TZInfoType.  ob must not be NULL.
+Return true if ob is of type PyDateTime_TZInfoType. ob must not be
+NULL.
+Macros to create objects:
+Return a datetime.date object with the specified year, month and day.
+Return a datetime.datetime object with the specified year, month, day, hour,
+minute, second and microsecond.
+Return a datetime.time object with the specified hour, minute, second and
+microsecond.
+Return a datetime.timedelta object representing the given number of days,
+seconds and microseconds.  Normalization is performed so that the resulting
+number of microseconds and seconds lie in the ranges documented for
+datetime.timedelta objects.
+Macros to extract fields from date objects.  The argument must be an instance of
+PyDateTime_Date, including subclasses (such as
+PyDateTime_DateTime).  The argument must not be NULL, and the type is
+not checked:
+Return the year, as a positive int.
+Return the month, as an int from 1 through 12.
+Return the day, as an int from 1 through 31.
+Macros to extract fields from datetime objects.  The argument must be an
+instance of PyDateTime_DateTime, including subclasses. The argument
+must not be NULL, and the type is not checked:
+Return the hour, as an int from 0 through 23.
+Return the minute, as an int from 0 through 59.
+Return the second, as an int from 0 through 59.
+Return the microsecond, as an int from 0 through 999999.
+Macros to extract fields from time objects.  The argument must be an instance of
+PyDateTime_Time, including subclasses. The argument must not be NULL,
+and the type is not checked:
+Return the hour, as an int from 0 through 23.
+Return the minute, as an int from 0 through 59.
+Return the second, as an int from 0 through 59.
+Return the microsecond, as an int from 0 through 999999.
+Macros to extract fields from time delta objects.  The argument must be an
+instance of PyDateTime_Delta, including subclasses. The argument must
+not be NULL, and the type is not checked:
+Return the number of days, as an int from -999999999 to 999999999.
+New in version 3.3.
+Return the number of seconds, as an int from 0 through 86399.
+New in version 3.3.
+Return the number of microseconds, as an int from 0 through 999999.
+New in version 3.3.
+Macros for the convenience of modules implementing the DB API:
+Create and return a new datetime.datetime object given an argument tuple
+suitable for passing to datetime.datetime.fromtimestamp().
+Create and return a new datetime.date object given an argument tuple
+suitable for passing to datetime.date.fromtimestamp().
+Coroutine Objects
+Initialization, Finalization, and Threads
+
+    Enter search terms or a module, class or function name.
+    
+

@@ -1,0 +1,49 @@
+URL: https://docs.python.org/3/library/xml.html
+
+Title: 20.4. XML Processing Modules — Python 3.5.2 documentation
+
+Doc Id: 154
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :Source code: Lib/xml/
+Python’s interfaces for processing XML are grouped in the xml package.
+Warning
+The XML modules are not secure against erroneous or maliciously
+constructed data.  If you need to parse untrusted or
+unauthenticated data see the XML vulnerabilities and
+The defusedxml and defusedexpat Packages sections.
+It is important to note that modules in the xml package require that
+there be at least one SAX-compliant XML parser available. The Expat parser is
+included with Python, so the xml.parsers.expat module will always be
+available.
+The documentation for the xml.dom and xml.sax packages are the
+definition of the Python bindings for the DOM and SAX interfaces.
+The XML handling submodules are:
+The XML processing modules are not secure against maliciously constructed data.
+An attacker can abuse XML features to carry out denial of service attacks,
+access local files, generate network connections to other machines, or
+circumvent firewalls.
+The following table gives an overview of the known attacks and whether
+the various modules are vulnerable to them.
+The documentation for defusedxml on PyPI has further information about
+all known attack vectors with examples and references.
+defusedxml is a pure Python package with modified subclasses of all stdlib
+XML parsers that prevent any potentially malicious operation. Use of this
+package is recommended for any server code that parses untrusted XML data. The
+package also ships with example exploits and extended documentation on more
+XML exploits such as XPath injection.
+defusedexpat provides a modified libexpat and a patched
+pyexpat module that have countermeasures against entity expansion
+DoS attacks. The defusedexpat module still allows a sane and configurable amount of entity
+expansions. The modifications may be included in some future release of Python,
+but will not be included in any bugfix releases of
+Python because they break backward compatibility.
+20.3. html.entities — Definitions of HTML general entities
+20.5. xml.etree.ElementTree — The ElementTree XML API
+
+    Enter search terms or a module, class or function name.
+    
+

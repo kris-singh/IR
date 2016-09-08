@@ -1,0 +1,182 @@
+URL: https://docs.python.org/3/library/concurrent.futures.html
+
+Title: 17.4. concurrent.futures — Launching parallel tasks — Python 3.5.2 documentation
+
+Doc Id: 128
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :New in version 3.2.
+Source code: Lib/concurrent/futures/thread.py
+and Lib/concurrent/futures/process.py
+The concurrent.futures module provides a high-level interface for
+asynchronously executing callables.
+The asynchronous execution can be performed with threads, using
+ThreadPoolExecutor, or separate processes, using
+ProcessPoolExecutor.  Both implement the same interface, which is
+defined by the abstract Executor class.
+An abstract class that provides methods to execute calls asynchronously.  It
+should not be used directly, but through its concrete subclasses.
+Schedules the callable, fn, to be executed as fn(*args **kwargs)
+and returns a Future object representing the execution of the
+callable.
+Equivalent to map(func, *iterables) except func is executed
+asynchronously and several calls to func may be made concurrently.  The
+returned iterator raises a concurrent.futures.TimeoutError if
+__next__() is called and the result isn’t available
+after timeout seconds from the original call to Executor.map().
+timeout can be an int or a float.  If timeout is not specified or
+None, there is no limit to the wait time.  If a call raises an
+exception, then that exception will be raised when its value is
+retrieved from the iterator. When using ProcessPoolExecutor, this
+method chops iterables into a number of chunks which it submits to the
+pool as separate tasks. The (approximate) size of these chunks can be
+specified by setting chunksize to a positive integer. For very long
+iterables, using a large value for chunksize can significantly improve
+performance compared to the default size of 1. With ThreadPoolExecutor,
+chunksize has no effect.
+Changed in version 3.5: Added the chunksize argument.
+Signal the executor that it should free any resources that it is using
+when the currently pending futures are done executing.  Calls to
+Executor.submit() and Executor.map() made after shutdown will
+raise RuntimeError.
+If wait is True then this method will not return until all the
+pending futures are done executing and the resources associated with the
+executor have been freed.  If wait is False then this method will
+return immediately and the resources associated with the executor will be
+freed when all pending futures are done executing.  Regardless of the
+value of wait, the entire Python program will not exit until all
+pending futures are done executing.
+You can avoid having to call this method explicitly if you use the
+with statement, which will shutdown the Executor
+(waiting as if Executor.shutdown() were called with wait set to
+True):
+ThreadPoolExecutor is an Executor subclass that uses a pool of
+threads to execute calls asynchronously.
+Deadlocks can occur when the callable associated with a Future waits on
+the results of another Future.  For example:
+And:
+An Executor subclass that uses a pool of at most max_workers
+threads to execute calls asynchronously.
+Changed in version 3.5: If max_workers is None or
+not given, it will default to the number of processors on the machine,
+multiplied by 5, assuming that ThreadPoolExecutor is often
+used to overlap I/O instead of CPU work and the number of workers
+should be higher than the number of workers
+for ProcessPoolExecutor.
+The ProcessPoolExecutor class is an Executor subclass that
+uses a pool of processes to execute calls asynchronously.
+ProcessPoolExecutor uses the multiprocessing module, which
+allows it to side-step the Global Interpreter Lock but also means that
+only picklable objects can be executed and returned.
+The __main__ module must be importable by worker subprocesses. This means
+that ProcessPoolExecutor will not work in the interactive interpreter.
+Calling Executor or Future methods from a callable submitted
+to a ProcessPoolExecutor will result in deadlock.
+An Executor subclass that executes calls asynchronously using a pool
+of at most max_workers processes.  If max_workers is None or not
+given, it will default to the number of processors on the machine.
+If max_workers is lower or equal to 0, then a ValueError
+will be raised.
+Changed in version 3.3: When one of the worker processes terminates abruptly, a
+BrokenProcessPool error is now raised.  Previously, behaviour
+was undefined but operations on the executor or its futures would often
+freeze or deadlock.
+The Future class encapsulates the asynchronous execution of a callable.
+Future instances are created by Executor.submit().
+Encapsulates the asynchronous execution of a callable.  Future
+instances are created by Executor.submit() and should not be created
+directly except for testing.
+Attempt to cancel the call.  If the call is currently being executed and
+cannot be cancelled then the method will return False, otherwise the
+call will be cancelled and the method will return True.
+Return True if the call was successfully cancelled.
+Return True if the call is currently being executed and cannot be
+cancelled.
+Return True if the call was successfully cancelled or finished
+running.
+Return the value returned by the call. If the call hasn’t yet completed
+then this method will wait up to timeout seconds.  If the call hasn’t
+completed in timeout seconds, then a
+concurrent.futures.TimeoutError will be raised. timeout can be
+an int or float.  If timeout is not specified or None, there is no
+limit to the wait time.
+If the future is cancelled before completing then CancelledError
+will be raised.
+If the call raised, this method will raise the same exception.
+Return the exception raised by the call.  If the call hasn’t yet
+completed then this method will wait up to timeout seconds.  If the
+call hasn’t completed in timeout seconds, then a
+concurrent.futures.TimeoutError will be raised.  timeout can be
+an int or float.  If timeout is not specified or None, there is no
+limit to the wait time.
+If the future is cancelled before completing then CancelledError
+will be raised.
+If the call completed without raising, None is returned.
+Attaches the callable fn to the future.  fn will be called, with the
+future as its only argument, when the future is cancelled or finishes
+running.
+Added callables are called in the order that they were added and are
+always called in a thread belonging to the process that added them.  If
+the callable raises an Exception subclass, it will be logged and
+ignored.  If the callable raises a BaseException subclass, the
+behavior is undefined.
+If the future has already completed or been cancelled, fn will be
+called immediately.
+The following Future methods are meant for use in unit tests and
+Executor implementations.
+This method should only be called by Executor implementations
+before executing the work associated with the Future and by unit
+tests.
+If the method returns False then the Future was cancelled,
+i.e. Future.cancel() was called and returned True.  Any threads
+waiting on the Future completing (i.e. through
+as_completed() or wait()) will be woken up.
+If the method returns True then the Future was not cancelled
+and has been put in the running state, i.e. calls to
+Future.running() will return True.
+This method can only be called once and cannot be called after
+Future.set_result() or Future.set_exception() have been
+called.
+Sets the result of the work associated with the Future to
+result.
+This method should only be used by Executor implementations and
+unit tests.
+Sets the result of the work associated with the Future to the
+Exception exception.
+This method should only be used by Executor implementations and
+unit tests.
+Wait for the Future instances (possibly created by different
+Executor instances) given by fs to complete.  Returns a named
+2-tuple of sets.  The first set, named done, contains the futures that
+completed (finished or were cancelled) before the wait completed.  The second
+set, named not_done, contains uncompleted futures.
+timeout can be used to control the maximum number of seconds to wait before
+returning.  timeout can be an int or float.  If timeout is not specified
+or None, there is no limit to the wait time.
+return_when indicates when this function should return.  It must be one of
+the following constants:
+Returns an iterator over the Future instances (possibly created by
+different Executor instances) given by fs that yields futures as
+they complete (finished or were cancelled). Any futures given by fs that
+are duplicated will be returned once. Any futures that completed before
+as_completed() is called will be yielded first.  The returned iterator
+raises a concurrent.futures.TimeoutError if __next__()
+is called and the result isn’t available after timeout seconds from the
+original call to as_completed().  timeout can be an int or float. If
+timeout is not specified or None, there is no limit to the wait time.
+See also
+Raised when a future is cancelled.
+Raised when a future operation exceeds the given timeout.
+Derived from RuntimeError, this exception class is raised when
+one of the workers of a ProcessPoolExecutor has terminated
+in a non-clean fashion (for example, if it was killed from the outside).
+New in version 3.3.
+17.3. The concurrent package
+17.5. subprocess — Subprocess management
+
+    Enter search terms or a module, class or function name.
+    
+

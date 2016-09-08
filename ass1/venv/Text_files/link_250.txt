@@ -1,0 +1,58 @@
+URL: https://docs.python.org/3/library/pyclbr.html
+
+Title: 32.9. pyclbr — Python class browser support — Python 3.5.2 documentation
+
+Doc Id: 250
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :Source code: Lib/pyclbr.py
+The pyclbr module can be used to determine some limited information
+about the classes, methods and top-level functions defined in a module.  The
+information provided is sufficient to implement a traditional three-pane
+class browser.  The information is extracted from the source code rather
+than by importing the module, so this module is safe to use with untrusted
+code.  This restriction makes it impossible to use this module with modules
+not implemented in Python, including all standard and optional extension
+modules.
+Read a module and return a dictionary mapping class names to class
+descriptor objects.  The parameter module should be the name of a
+module as a string; it may be the name of a module within a package.  The
+path parameter should be a sequence, and is used to augment the value
+of sys.path, which is used to locate module source code.
+Like readmodule(), but the returned dictionary, in addition to
+mapping class names to class descriptor objects, also maps top-level
+function names to function descriptor objects.  Moreover, if the module
+being read is a package, the key '__path__' in the returned
+dictionary has as its value a list which contains the package search
+path.
+The Class objects used as values in the dictionary returned by
+readmodule() and readmodule_ex() provide the following data
+attributes:
+The name of the module defining the class described by the class descriptor.
+The name of the class.
+A list of Class objects which describe the immediate base
+classes of the class being described.  Classes which are named as
+superclasses but which are not discoverable by readmodule() are
+listed as a string with the class name instead of as Class
+objects.
+A dictionary mapping method names to line numbers.
+Name of the file containing the class statement defining the class.
+The line number of the class statement within the file named by
+file.
+The Function objects used as values in the dictionary returned by
+readmodule_ex() provide the following attributes:
+The name of the module defining the function described by the function
+descriptor.
+The name of the function.
+Name of the file containing the def statement defining the function.
+The line number of the def statement within the file named by
+file.
+32.8. tabnanny — Detection of ambiguous indentation
+32.10. py_compile — Compile Python source files
+
+    Enter search terms or a module, class or function name.
+    
+

@@ -1,0 +1,161 @@
+URL: https://docs.python.org/3/library/asyncio-stream.html
+
+Title: 18.5.5. Streams (coroutine based API) — Python 3.5.2 documentation
+
+Doc Id: 417
+
+Meta Tags : No meta tag found in document
+
+Date :Aug 08, 2016
+
+Content :Note
+The top-level functions in this module are meant as convenience wrappers
+only; there’s really nothing special there, and if they don’t do
+exactly what you want, feel free to copy their code.
+A wrapper for create_connection() returning a (reader,
+writer) pair.
+The reader returned is a StreamReader instance; the writer is
+a StreamWriter instance.
+The arguments are all the usual arguments to
+AbstractEventLoop.create_connection() except protocol_factory; most
+common are positional host and port, with various optional keyword arguments
+following.
+Additional optional keyword arguments are loop (to set the event loop
+instance to use) and limit (to set the buffer limit passed to the
+StreamReader).
+This function is a coroutine.
+Start a socket server, with a callback for each client connected. The return
+value is the same as create_server().
+The client_connected_cb parameter is called with two parameters:
+client_reader, client_writer.  client_reader is a
+StreamReader object, while client_writer is a
+StreamWriter object.  The client_connected_cb parameter can
+either be a plain callback function or a coroutine function; if it is a coroutine function, it will be automatically
+converted into a Task.
+The rest of the arguments are all the usual arguments to
+create_server() except protocol_factory; most
+common are positional host and port, with various optional keyword
+arguments following.
+Additional optional keyword arguments are loop (to set the event loop
+instance to use) and limit (to set the buffer limit passed to the
+StreamReader).
+This function is a coroutine.
+A wrapper for create_unix_connection() returning
+a (reader, writer) pair.
+See open_connection() for information about return value and other
+details.
+This function is a coroutine.
+Availability: UNIX.
+Start a UNIX Domain Socket server, with a callback for each client connected.
+See start_server() for information about return value and other
+details.
+This function is a coroutine.
+Availability: UNIX.
+This class is not thread safe.
+Get the exception.
+Acknowledge the EOF.
+Feed data bytes in the internal buffer.  Any operations waiting
+for the data will be resumed.
+Set the exception.
+Set the transport.
+Read up to n bytes.  If n is not provided, or set to -1,
+read until EOF and return all read bytes.
+If the EOF was received and the internal buffer is empty,
+return an empty bytes object.
+This method is a coroutine.
+Read one line, where “line” is a sequence of bytes ending with \n.
+If EOF is received, and \n was not found, the method will
+return the partial read bytes.
+If the EOF was received and the internal buffer is empty,
+return an empty bytes object.
+This method is a coroutine.
+Read exactly n bytes. Raise an IncompleteReadError if the end of
+the stream is reached before n can be read, the
+IncompleteReadError.partial attribute of the exception contains
+the partial read bytes.
+This method is a coroutine.
+Read data from the stream until separator is found.
+On success, the data and separator will be removed from the
+internal buffer (consumed). Returned data will include the
+separator at the end.
+Configured stream limit is used to check result. Limit sets the
+maximal length of data that can be returned, not counting the
+separator.
+If an EOF occurs and the complete separator is still not found,
+an IncompleteReadError exception will be
+raised, and the internal buffer will be reset.  The
+IncompleteReadError.partial attribute may contain the
+separator partially.
+If the data cannot be read because of over limit, a
+LimitOverrunError exception  will be raised, and the data
+will be left in the internal buffer, so it can be read again.
+New in version 3.5.2.
+Return True if the buffer is empty and feed_eof() was called.
+Wraps a Transport.
+This exposes write(), writelines(), can_write_eof(),
+write_eof(), get_extra_info() and close().  It adds
+drain() which returns an optional Future on which you can
+wait for flow control.  It also adds a transport attribute which references
+the Transport directly.
+This class is not thread safe.
+Transport.
+Return True if the transport supports write_eof(),
+False if not. See WriteTransport.can_write_eof().
+Close the transport: see BaseTransport.close().
+Let the write buffer of the underlying transport a chance to be flushed.
+The intended use is to write:
+When the size of the transport buffer reaches the high-water limit (the
+protocol is paused), block until the size of the buffer is drained down
+to the low-water limit and the protocol is resumed. When there is nothing
+to wait for, the yield-from continues immediately.
+Yielding from drain() gives the opportunity for the loop to
+schedule the write operation and flush the buffer. It should especially
+be used when a possibly large amount of data is written to the transport,
+and the coroutine does not yield-from between calls to write().
+This method is a coroutine.
+Return optional transport information: see
+BaseTransport.get_extra_info().
+Write some data bytes to the transport: see
+WriteTransport.write().
+Write a list (or any iterable) of data bytes to the transport:
+see WriteTransport.writelines().
+Close the write end of the transport after flushing buffered data:
+see WriteTransport.write_eof().
+Trivial helper class to adapt between Protocol and
+StreamReader. Subclass of Protocol.
+stream_reader is a StreamReader instance, client_connected_cb
+is an optional function called with (stream_reader, stream_writer) when a
+connection is made, loop is the event loop instance to use.
+(This is a helper class instead of making StreamReader itself a
+Protocol subclass, because the StreamReader has other
+potential uses, and to prevent the user of the StreamReader from
+accidentally calling inappropriate methods of the protocol.)
+Total number of expected bytes (int).
+Read bytes string before the end of stream was reached (bytes).
+Reached the buffer limit while looking for a separator.
+Total number of to be consumed bytes.
+TCP echo client using the asyncio.open_connection() function:
+See also
+The TCP echo client protocol
+example uses the AbstractEventLoop.create_connection() method.
+TCP echo server using the asyncio.start_server() function:
+See also
+The TCP echo server protocol
+example uses the AbstractEventLoop.create_server() method.
+Simple example querying HTTP headers of the URL passed on the command line:
+Usage:
+or with HTTPS:
+Coroutine waiting until a socket receives data using the
+open_connection() function:
+See also
+The register an open socket to wait for data using a protocol example uses a low-level protocol created by the
+AbstractEventLoop.create_connection() method.
+The watch a file descriptor for read events example uses the low-level
+AbstractEventLoop.add_reader() method to register the file descriptor of a
+socket.
+18.5.4. Transports  and protocols (callback based API)
+18.5.6. Subprocess
+
+    Enter search terms or a module, class or function name.
+    
+

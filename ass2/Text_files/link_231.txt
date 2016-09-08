@@ -1,0 +1,168 @@
+URL: https://docs.python.org/3/library/traceback.html
+
+Title: 29.9. traceback — Print or retrieve a stack traceback — Python 3.5.2 documentation
+
+Doc Id: 231
+
+Meta Tags : No meta tag found in document
+
+Date :Aug 10, 2016
+
+Content :Source code: Lib/traceback.py
+This module provides a standard interface to extract, format and print stack
+traces of Python programs.  It exactly mimics the behavior of the Python
+interpreter when it prints a stack trace.  This is useful when you want to print
+stack traces under program control, such as in a “wrapper” around the
+interpreter.
+The module uses traceback objects — this is the object type that is stored in
+the sys.last_traceback variable and returned as the third item from
+sys.exc_info().
+The module defines the following functions:
+Print up to limit stack trace entries from traceback object tb (starting
+from the caller’s frame) if limit is positive.  Otherwise, print the last
+abs(limit) entries.  If limit is omitted or None, all entries are
+printed.  If file is omitted or None, the output goes to
+sys.stderr; otherwise it should be an open file or file-like object to
+receive the output.
+Changed in version 3.5: Added negative limit support.
+Print exception information and stack trace entries from traceback object
+tb to file. This differs from print_tb() in the following
+ways:
+The optional limit argument has the same meaning as for print_tb().
+If chain is true (the default), then chained exceptions (the
+__cause__ or __context__ attributes of the exception) will be
+printed as well, like the interpreter itself does when printing an unhandled
+exception.
+This is a shorthand for print_exception(*sys.exc_info(), limit, file,
+chain).
+This is a shorthand for print_exception(sys.last_type, sys.last_value,
+sys.last_traceback, limit, file, chain).  In general it will work only
+after an exception has reached an interactive prompt (see
+sys.last_type).
+Print up to limit stack trace entries (starting from the invocation
+point) if limit is positive.  Otherwise, print the last abs(limit)
+entries.  If limit is omitted or None, all entries are printed.
+The optional f argument can be used to specify an alternate stack frame
+to start.  The optional file argument has the same meaning as for
+print_tb().
+Changed in version 3.5: Added negative limit support.
+Return a list of “pre-processed” stack trace entries extracted from the
+traceback object tb.  It is useful for alternate formatting of
+stack traces.  The optional limit argument has the same meaning as for
+print_tb().  A “pre-processed” stack trace entry is a 4-tuple
+(filename, line number, function name, text) representing the
+information that is usually printed for a stack trace.  The text is a
+string with leading and trailing whitespace stripped; if the source is
+not available it is None.
+Extract the raw traceback from the current stack frame.  The return value has
+the same format as for extract_tb().  The optional f and limit
+arguments have the same meaning as for print_stack().
+Given a list of tuples as returned by extract_tb() or
+extract_stack(), return a list of strings ready for printing. Each
+string in the resulting list corresponds to the item with the same index in
+the argument list.  Each string ends in a newline; the strings may contain
+internal newlines as well, for those items whose source text line is not
+None.
+Format the exception part of a traceback.  The arguments are the exception
+type and value such as given by sys.last_type and sys.last_value.
+The return value is a list of strings, each ending in a newline.  Normally,
+the list contains a single string; however, for SyntaxError
+exceptions, it contains several lines that (when printed) display detailed
+information about where the syntax error occurred.  The message indicating
+which exception occurred is the always last string in the list.
+Format a stack trace and the exception information.  The arguments  have the
+same meaning as the corresponding arguments to print_exception().  The
+return value is a list of strings, each ending in a newline and some
+containing internal newlines.  When these lines are concatenated and printed,
+exactly the same text is printed as does print_exception().
+This is like print_exc(limit) but returns a string instead of printing to
+a file.
+A shorthand for format_list(extract_tb(tb, limit)).
+A shorthand for format_list(extract_stack(f, limit)).
+Clears the local variables of all the stack frames in a traceback tb
+by calling the clear() method of each frame object.
+New in version 3.4.
+Walk a stack following f.f_back from the given frame, yielding the frame
+and line number for each frame. If f is None, the current stack is
+used. This helper is used with StackSummary.extract().
+New in version 3.5.
+Walk a traceback following tb_next yielding the frame and line number
+for each frame. This helper is used with StackSummary.extract().
+New in version 3.5.
+The module also defines the following classes:
+New in version 3.5.
+TracebackException objects are created from actual exceptions to
+capture data for later printing in a lightweight fashion.
+Capture an exception for later rendering. limit, lookup_lines and
+capture_locals are as for the StackSummary class.
+Note that when locals are captured, they are also shown in the traceback.
+A TracebackException of the original __cause__.
+A TracebackException of the original __context__.
+The __suppress_context__ value from the original exception.
+A StackSummary representing the traceback.
+The class of the original traceback.
+For syntax errors - the file name where the error occurred.
+For syntax errors - the line number where the error occurred.
+For syntax errors - the text where the error occurred.
+For syntax errors - the offset into the text where the error occurred.
+For syntax errors - the compiler error message.
+Capture an exception for later rendering. limit, lookup_lines and
+capture_locals are as for the StackSummary class.
+Note that when locals are captured, they are also shown in the traceback.
+Format the exception.
+If chain is not True, __cause__ and __context__ will not
+be formatted.
+The return value is a generator of strings, each ending in a newline and
+some containing internal newlines. print_exception()
+is a wrapper around this method which just prints the lines to a file.
+The message indicating which exception occurred is always the last
+string in the output.
+Format the exception part of the traceback.
+The return value is a generator of strings, each ending in a newline.
+Normally, the generator emits a single string; however, for
+SyntaxError exceptions, it emits several lines that (when
+printed) display detailed information about where the syntax
+error occurred.
+The message indicating which exception occurred is always the last
+string in the output.
+New in version 3.5.
+StackSummary objects represent a call stack ready for formatting.
+Construct a StackSummary object from a frame generator (such as
+is returned by walk_stack() or
+walk_tb()).
+If limit is supplied, only this many frames are taken from frame_gen.
+If lookup_lines is False, the returned FrameSummary
+objects will not have read their lines in yet, making the cost of
+creating the StackSummary cheaper (which may be valuable if it
+may not actually get formatted). If capture_locals is True the
+local variables in each FrameSummary are captured as object
+representations.
+Construct a StackSummary object from a supplied old-style list
+of tuples. Each tuple should be a 4-tuple with filename, lineno, name,
+line as the elements.
+New in version 3.5.
+FrameSummary objects represent a single frame in a traceback.
+Represent a single frame in the traceback or stack that is being formatted
+or printed. It may optionally have a stringified version of the frames
+locals included in it. If lookup_line is False, the source code is not
+looked up until the FrameSummary has the line
+attribute accessed (which also happens when casting it to a tuple).
+line may be directly provided, and will prevent line
+lookups happening at all. locals is an optional local variable
+dictionary, and if supplied the variable representations are stored in the
+summary for later display.
+This simple example implements a basic read-eval-print loop, similar to (but
+less useful than) the standard Python interactive interpreter loop.  For a more
+complete implementation of the interpreter loop, refer to the code
+module.
+The following example demonstrates the different ways to print and format the
+exception and traceback:
+The output for the example would look similar to this:
+The following example shows the different ways to print and format the stack:
+This last example demonstrates the final few formatting functions:
+29.8. atexit — Exit handlers
+29.10. __future__ — Future statement definitions
+
+    Enter search terms or a module, class or function name.
+    
+

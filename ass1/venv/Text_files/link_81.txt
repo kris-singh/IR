@@ -1,0 +1,128 @@
+URL: https://docs.python.org/3/library/operator.html
+
+Title: 10.3. operator — Standard operators as functions — Python 3.5.2 documentation
+
+Doc Id: 81
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :Source code: Lib/operator.py
+The operator module exports a set of efficient functions corresponding to
+the intrinsic operators of Python.  For example, operator.add(x, y) is
+equivalent to the expression x+y.  The function names are those used for
+special class methods; variants without leading and trailing __ are also
+provided for convenience.
+The functions fall into categories that perform object comparisons, logical
+operations, mathematical operations and sequence operations.
+The object comparison functions are useful for all objects, and are named after
+the rich comparison operators they support:
+Perform “rich comparisons” between a and b. Specifically, lt(a, b) is
+equivalent to a < b, le(a, b) is equivalent to a <= b, eq(a,
+b) is equivalent to a == b, ne(a, b) is equivalent to a != b,
+gt(a, b) is equivalent to a > b and ge(a, b) is equivalent to a
+>= b.  Note that these functions can return any value, which may
+or may not be interpretable as a Boolean value.  See
+Comparisons for more information about rich comparisons.
+The logical operations are also generally applicable to all objects, and support
+truth tests, identity tests, and boolean operations:
+Return the outcome of not obj.  (Note that there is no
+__not__() method for object instances; only the interpreter core defines
+this operation.  The result is affected by the __bool__() and
+__len__() methods.)
+Return True if obj is true, and False otherwise.  This is
+equivalent to using the bool constructor.
+Return a is b.  Tests object identity.
+Return a is not b.  Tests object identity.
+The mathematical and bitwise operations are the most numerous:
+Return the absolute value of obj.
+Return a + b, for a and b numbers.
+Return the bitwise and of a and b.
+Return a // b.
+Return a converted to an integer.  Equivalent to a.__index__().
+Return the bitwise inverse of the number obj.  This is equivalent to ~obj.
+Return a shifted left by b.
+Return a % b.
+Return a * b, for a and b numbers.
+Return a @ b.
+New in version 3.5.
+Return obj negated (-obj).
+Return the bitwise or of a and b.
+Return obj positive (+obj).
+Return a ** b, for a and b numbers.
+Return a shifted right by b.
+Return a - b.
+Return a / b where 2/3 is .66 rather than 0.  This is also known as
+“true” division.
+Return the bitwise exclusive or of a and b.
+Operations which work with sequences (some of them with mappings too) include:
+Return a + b for a and b sequences.
+Return the outcome of the test b in a. Note the reversed operands.
+Return the number of occurrences of b in a.
+Remove the value of a at index b.
+Return the value of a at index b.
+Return the index of the first of occurrence of b in a.
+Set the value of a at index b to c.
+Return an estimated length for the object o. First try to return its
+actual length, then an estimate using object.__length_hint__(), and
+finally return the default value.
+New in version 3.4.
+The operator module also defines tools for generalized attribute and item
+lookups.  These are useful for making fast field extractors as arguments for
+map(), sorted(), itertools.groupby(), or other functions that
+expect a function argument.
+Return a callable object that fetches attr from its operand.
+If more than one attribute is requested, returns a tuple of attributes.
+The attribute names can also contain dots. For example:
+Equivalent to:
+Return a callable object that fetches item from its operand using the
+operand’s __getitem__() method.  If multiple items are specified,
+returns a tuple of lookup values.  For example:
+Equivalent to:
+The items can be any type accepted by the operand’s __getitem__()
+method.  Dictionaries accept any hashable value.  Lists, tuples, and
+strings accept an index or a slice:
+Example of using itemgetter() to retrieve specific fields from a
+tuple record:
+Return a callable object that calls the method name on its operand.  If
+additional arguments and/or keyword arguments are given, they will be given
+to the method as well.  For example:
+Equivalent to:
+This table shows how abstract operations correspond to operator symbols in the
+Python syntax and the functions in the operator module.
+Many operations have an “in-place” version.  Listed below are functions
+providing a more primitive access to in-place operators than the usual syntax
+does; for example, the statement x += y is equivalent to
+x = operator.iadd(x, y).  Another way to put it is to say that
+z = operator.iadd(x, y) is equivalent to the compound statement
+z = x; z += y.
+In those examples, note that when an in-place method is called, the computation
+and assignment are performed in two separate steps.  The in-place functions
+listed below only do the first step, calling the in-place method.  The second
+step, assignment, is not handled.
+For immutable targets such as strings, numbers, and tuples, the updated
+value is computed, but not assigned back to the input variable:
+For mutable targets such as lists and dictionaries, the inplace method
+will perform the update, so no subsequent assignment is necessary:
+a = iadd(a, b) is equivalent to a += b.
+a = iand(a, b) is equivalent to a &= b.
+a = iconcat(a, b) is equivalent to a += b for a and b sequences.
+a = ifloordiv(a, b) is equivalent to a //= b.
+a = ilshift(a, b) is equivalent to a <<= b.
+a = imod(a, b) is equivalent to a %= b.
+a = imul(a, b) is equivalent to a *= b.
+a = imatmul(a, b) is equivalent to a @= b.
+New in version 3.5.
+a = ior(a, b) is equivalent to a |= b.
+a = ipow(a, b) is equivalent to a **= b.
+a = irshift(a, b) is equivalent to a >>= b.
+a = isub(a, b) is equivalent to a -= b.
+a = itruediv(a, b) is equivalent to a /= b.
+a = ixor(a, b) is equivalent to a ^= b.
+10.2. functools — Higher-order functions and operations on callable objects
+11. File and Directory Access
+
+    Enter search terms or a module, class or function name.
+    
+

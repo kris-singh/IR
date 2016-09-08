@@ -1,0 +1,58 @@
+URL: https://docs.python.org/3/c-api/complex.html
+
+Title: Complex Number Objects — Python 3.5.2 documentation
+
+Doc Id: 511
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :Python’s complex number objects are implemented as two distinct types when
+viewed from the C API:  one is the Python object exposed to Python programs, and
+the other is a C structure which represents the actual complex number value.
+The API provides functions for working with both.
+Note that the functions which accept these structures as parameters and return
+them as results do so by value rather than dereferencing them through
+pointers.  This is consistent throughout the API.
+The C structure which corresponds to the value portion of a Python complex
+number object.  Most of the functions for dealing with complex number objects
+use structures of this type as input or output values, as appropriate.  It is
+defined as:
+Return the sum of two complex numbers, using the C Py_complex
+representation.
+Return the difference between two complex numbers, using the C
+Py_complex representation.
+Return the negation of the complex number complex, using the C
+Py_complex representation.
+Return the product of two complex numbers, using the C Py_complex
+representation.
+Return the quotient of two complex numbers, using the C Py_complex
+representation.
+If divisor is null, this method returns zero and sets
+errno to EDOM.
+Return the exponentiation of num by exp, using the C Py_complex
+representation.
+If num is null and exp is not a positive real number,
+this method returns zero and sets errno to EDOM.
+This subtype of PyObject represents a Python complex number object.
+This instance of PyTypeObject represents the Python complex number
+type. It is the same object as complex in the Python layer.
+Return true if its argument is a PyComplexObject or a subtype of
+PyComplexObject.
+Return true if its argument is a PyComplexObject, but not a subtype of
+PyComplexObject.
+Create a new Python complex number object from a C Py_complex value.
+Return a new PyComplexObject object from real and imag.
+Return the real part of op as a C double.
+Return the imaginary part of op as a C double.
+Return the Py_complex value of the complex number op.
+If op is not a Python complex number object but has a __complex__()
+method, this method will first be called to convert op to a Python complex
+number object. Upon failure, this method returns -1.0 as a real value.
+Floating Point Objects
+Bytes Objects
+
+    Enter search terms or a module, class or function name.
+    
+

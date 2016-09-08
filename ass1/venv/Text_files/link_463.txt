@@ -1,0 +1,33 @@
+URL: https://docs.python.org/3/library/tk.html
+
+Title: 25. Graphical User Interfaces with Tk — Python 3.5.2 documentation
+
+Doc Id: 463
+
+Meta Tags : No meta tag found in document
+
+Date :Jul 29, 2016
+
+Content :Tk/Tcl has long been an integral part of Python.  It provides a robust and
+platform independent windowing toolkit, that is available to Python programmers
+using the tkinter package, and its extension, the tkinter.tix and
+the tkinter.ttk modules.
+The tkinter package is a thin object-oriented layer on top of Tcl/Tk. To
+use tkinter, you don’t need to write Tcl code, but you will need to
+consult the Tk documentation, and occasionally the Tcl documentation.
+tkinter is a set of wrappers that implement the Tk widgets as Python
+classes.  In addition, the internal module _tkinter provides a threadsafe
+mechanism which allows Python and Tcl to interact.
+tkinter‘s chief virtues are that it is fast, and that it usually comes
+bundled with Python. Although its standard documentation is weak, good
+material is available, which includes: references, tutorials, a book and
+others. tkinter is also famous for having an outdated look and feel,
+which has been vastly improved in Tk 8.5. Nevertheless, there are many other
+GUI libraries that you could be interested in. For more information about
+alternatives, see the Other Graphical User Interface Packages section.
+24.3. shlex — Simple lexical analysis
+25.1. tkinter — Python interface to Tcl/Tk
+
+    Enter search terms or a module, class or function name.
+    
+

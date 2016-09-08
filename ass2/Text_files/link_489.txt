@@ -1,0 +1,67 @@
+URL: https://docs.python.org/3/library/msvcrt.html
+
+Title: 34.2. msvcrt – Useful routines from the MS VC++ runtime — Python 3.5.2 documentation
+
+Doc Id: 489
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :These functions provide access to some useful capabilities on Windows platforms.
+Some higher-level modules use these functions to build the  Windows
+implementations of their services.  For example, the getpass module uses
+this in the implementation of the getpass() function.
+Further documentation on these functions can be found in the Platform API
+documentation.
+The module implements both the normal and wide char variants of the console I/O
+api. The normal API deals only with ASCII characters and is of limited use
+for internationalized applications. The wide char API should be used where
+ever possible.
+Changed in version 3.3: Operations in this module now raise OSError where IOError
+was raised.
+Lock part of a file based on file descriptor fd from the C runtime.  Raises
+OSError on failure.  The locked region of the file extends from the
+current file position for nbytes bytes, and may continue beyond the end of the
+file.  mode must be one of the LK_* constants listed below. Multiple
+regions in a file may be locked at the same time, but may not overlap.  Adjacent
+regions are not merged; they must be unlocked individually.
+Locks the specified bytes. If the bytes cannot be locked, the program
+immediately tries again after 1 second.  If, after 10 attempts, the bytes cannot
+be locked, OSError is raised.
+Locks the specified bytes. If the bytes cannot be locked, OSError is
+raised.
+Unlocks the specified bytes, which must have been previously locked.
+Set the line-end translation mode for the file descriptor fd. To set it to
+text mode, flags should be os.O_TEXT; for binary, it should be
+os.O_BINARY.
+Create a C runtime file descriptor from the file handle handle.  The flags
+parameter should be a bitwise OR of os.O_APPEND, os.O_RDONLY,
+and os.O_TEXT.  The returned file descriptor may be used as a parameter
+to os.fdopen() to create a file object.
+Return the file handle for the file descriptor fd.  Raises OSError if
+fd is not recognized.
+Return true if a keypress is waiting to be read.
+Read a keypress and return the resulting character as a byte string.
+Nothing is echoed to the console.  This call will block if a keypress
+is not already available, but will not wait for Enter to be
+pressed. If the pressed key was a special function key, this will
+return '\000' or '\xe0'; the next call will return the keycode.
+The Control-C keypress cannot be read with this function.
+Wide char variant of getch(), returning a Unicode value.
+Similar to getch(), but the keypress will be echoed if it  represents a
+printable character.
+Wide char variant of getche(), returning a Unicode value.
+Print the byte string char to the console without buffering.
+Wide char variant of putch(), accepting a Unicode value.
+Cause the byte string char to be “pushed back” into the console buffer;
+it will be the next character read by getch() or getche().
+Wide char variant of ungetch(), accepting a Unicode value.
+Force the malloc() heap to clean itself up and return unused blocks to
+the operating system.  On failure, this raises OSError.
+34.1. msilib — Read and write Microsoft Installer files
+34.3. winreg – Windows registry access
+
+    Enter search terms or a module, class or function name.
+    
+

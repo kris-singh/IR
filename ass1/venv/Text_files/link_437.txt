@@ -1,0 +1,39 @@
+URL: https://docs.python.org/3/library/email-examples.html
+
+Title: 19.1.14. email: Examples — Python 3.5.2 documentation
+
+Doc Id: 437
+
+Meta Tags : No meta tag found in document
+
+Date :Jul 29, 2016
+
+Content :Here are a few examples of how to use the email package to read, write,
+and send simple email messages, as well as more complex MIME messages.
+First, let’s see how to create and send a simple text message:
+And parsing RFC822 headers can easily be done by the parse(filename) or
+parsestr(message_as_string) methods of the Parser() class:
+Here’s an example of how to send a MIME message containing a bunch of family
+pictures that may be residing in a directory:
+Here’s an example of how to send the entire contents of a directory as an email
+message: [1]
+Here’s an example of how to unpack a MIME message like the one
+above, into a directory of files:
+Here’s an example of how to create an HTML message with an alternative plain
+text version: [2]
+Here is a reworking of the last example using the provisional API.  To make
+things a bit more interesting, we include a related image in the html part, and
+we save a copy of what we are going to send to disk, as well as sending it.
+This example also shows how easy it is to include non-ASCII, and simplifies the
+sending of the message using the send_message() method of the
+smtplib module.
+If we were instead sent the message from the last example, here is one
+way we could process it:
+Up to the prompt, the output from the above is:
+Footnotes
+19.1.13. email.iterators: Iterators
+19.2. json — JSON encoder and decoder
+
+    Enter search terms or a module, class or function name.
+    
+

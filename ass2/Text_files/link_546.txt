@@ -1,0 +1,351 @@
+URL: https://docs.python.org/3/glossary.html
+
+Title: Glossary — Python 3.5.2 documentation
+
+Doc Id: 546
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :A tool that tries to convert Python 2.x code to Python 3.x code by
+handling most of the incompatibilities which can be detected by parsing the
+source and traversing the parse tree.
+2to3 is available in the standard library as lib2to3; a standalone
+entry point is provided as Tools/scripts/2to3.  See
+2to3 - Automated Python 2 to 3 code translation.
+A value passed to a function (or method) when calling the
+function.  There are two kinds of argument:
+keyword argument: an argument preceded by an identifier (e.g.
+name=) in a function call or passed as a value in a dictionary
+preceded by **.  For example, 3 and 5 are both keyword
+arguments in the following calls to complex():
+positional argument: an argument that is not a keyword argument.
+Positional arguments can appear at the beginning of an argument list
+and/or be passed as elements of an iterable preceded by *.
+For example, 3 and 5 are both positional arguments in the
+following calls:
+Arguments are assigned to the named local variables in a function body.
+See the Calls section for the rules governing this assignment.
+Syntactically, any expression can be used to represent an argument; the
+evaluated value is assigned to the local variable.
+See also the parameter glossary entry, the FAQ question on
+the difference between arguments and parameters, and PEP 362.
+A file object able to read and write
+bytes-like objects.
+See also
+A text file reads and writes str objects.
+An object that supports the Buffer Protocol and can
+export a C-contiguous buffer. This includes all bytes,
+bytearray, and array.array objects, as well as many
+common memoryview objects.  Bytes-like objects can
+be used for various operations that work with binary data; these include
+compression, saving to a binary file, and sending over a socket.
+Some operations need the binary data to be mutable.  The documentation
+often refers to these as “read-write bytes-like objects”.  Example
+mutable buffer objects include bytearray and a
+memoryview of a bytearray.
+Other operations require the binary data to be stored in
+immutable objects (“read-only bytes-like objects”); examples
+of these include bytes and a memoryview
+of a bytes object.
+Python source code is compiled into bytecode, the internal representation
+of a Python program in the CPython interpreter.  The bytecode is also
+cached in .pyc and .pyo files so that executing the same file is
+faster the second time (recompilation from source to bytecode can be
+avoided).  This “intermediate language” is said to run on a
+virtual machine that executes the machine code corresponding to
+each bytecode. Do note that bytecodes are not expected to work between
+different Python virtual machines, nor to be stable between Python
+releases.
+A list of bytecode instructions can be found in the documentation for
+the dis module.
+A buffer is considered contiguous exactly if it is either
+C-contiguous or Fortran contiguous.  Zero-dimensional buffers are
+C and Fortran contiguous.  In one-dimensional arrays, the items
+must be laid out in memory next to each other, in order of
+increasing indexes starting from zero.  In multidimensional
+C-contiguous arrays, the last index varies the fastest when
+visiting items in order of memory address.  However, in
+Fortran contiguous arrays, the first index varies the fastest.
+A function returning another function, usually applied as a function
+transformation using the @wrapper syntax.  Common examples for
+decorators are classmethod() and staticmethod().
+The decorator syntax is merely syntactic sugar, the following two
+function definitions are semantically equivalent:
+The same concept exists for classes, but is less commonly used there.  See
+the documentation for function definitions and
+class definitions for more about decorators.
+Any object which defines the methods __get__(), __set__(), or
+__delete__().  When a class attribute is a descriptor, its special
+binding behavior is triggered upon attribute lookup.  Normally, using
+a.b to get, set or delete an attribute looks up the object named b in
+the class dictionary for a, but if b is a descriptor, the respective
+descriptor method gets called.  Understanding descriptors is a key to a
+deep understanding of Python because they are the basis for many features
+including functions, methods, properties, class methods, static methods,
+and reference to super classes.
+For more information about descriptors’ methods, see Implementing Descriptors.
+An object exposing a file-oriented API (with methods such as
+read() or write()) to an underlying resource.  Depending
+on the way it was created, a file object can mediate access to a real
+on-disk file or to another type of storage or communication device
+(for example standard input/output, in-memory buffers, sockets, pipes,
+etc.).  File objects are also called file-like objects or
+streams.
+There are actually three categories of file objects: raw
+binary files, buffered
+binary files and text files.
+Their interfaces are defined in the io module.  The canonical
+way to create a file object is by using the open() function.
+An object that tries to find the loader for a module that is
+being imported.
+Since Python 3.3, there are two types of finder: meta path finders for use with sys.meta_path, and path
+entry finders for use with sys.path_hooks.
+See PEP 302, PEP 420 and PEP 451 for much more detail.
+An arbitrary metadata value associated with a function parameter or return
+value. Its syntax is explained in section Function definitions.  Annotations
+may be accessed via the __annotations__ special attribute of a
+function object.
+Python itself does not assign any particular meaning to function
+annotations. They are intended to be interpreted by third-party libraries
+or tools.  See PEP 3107, which describes some of their potential uses.
+A pseudo-module which programmers can use to enable new language features
+which are not compatible with the current interpreter.
+By importing the __future__ module and evaluating its variables,
+you can see when a new feature was first added to the language and when it
+becomes the default:
+A function which returns a generator iterator.  It looks like a
+normal function except that it contains yield expressions
+for producing a series of values usable in a for-loop or that can be
+retrieved one at a time with the next() function.
+Usually refers to a generator function, but may refer to a
+generator iterator in some contexts.  In cases where the intended
+meaning isn’t clear, using the full terms avoids ambiguity.
+An object created by a generator function.
+Each yield temporarily suspends processing, remembering the
+location execution state (including local variables and pending
+try-statements).  When the generator iterator resumes, it picks-up where
+it left-off (in contrast to functions which start fresh on every
+invocation).
+An expression that returns an iterator.  It looks like a normal expression
+followed by a for expression defining a loop variable, range,
+and an optional if expression.  The combined expression
+generates values for an enclosing function:
+A function composed of multiple functions implementing the same operation
+for different types. Which implementation should be used during a call is
+determined by the dispatch algorithm.
+See also the single dispatch glossary entry, the
+functools.singledispatch() decorator, and PEP 443.
+The mechanism used by the CPython interpreter to assure that
+only one thread executes Python bytecode at a time.
+This simplifies the CPython implementation by making the object model
+(including critical built-in types such as dict) implicitly
+safe against concurrent access.  Locking the entire interpreter
+makes it easier for the interpreter to be multi-threaded, at the
+expense of much of the parallelism afforded by multi-processor
+machines.
+However, some extension modules, either standard or third-party,
+are designed so as to release the GIL when doing computationally-intensive
+tasks such as compression or hashing.  Also, the GIL is always released
+when doing I/O.
+Past efforts to create a “free-threaded” interpreter (one which locks
+shared data at a much finer granularity) have not been successful
+because performance suffered in the common single-processor case. It
+is believed that overcoming this performance issue would make the
+implementation much more complicated and therefore costlier to maintain.
+An object is hashable if it has a hash value which never changes during
+its lifetime (it needs a __hash__() method), and can be compared to
+other objects (it needs an __eq__() method).  Hashable objects which
+compare equal must have the same hash value.
+Hashability makes an object usable as a dictionary key and a set member,
+because these data structures use the hash value internally.
+All of Python’s immutable built-in objects are hashable, while no mutable
+containers (such as lists or dictionaries) are.  Objects which are
+instances of user-defined classes are hashable by default; they all
+compare unequal (except with themselves), and their hash value is derived
+from their id().
+When asked to shut down, the Python interpreter enters a special phase
+where it gradually releases all allocated resources, such as modules
+and various critical internal structures.  It also makes several calls
+to the garbage collector. This can trigger
+the execution of code in user-defined destructors or weakref callbacks.
+Code executed during the shutdown phase can encounter various
+exceptions as the resources it relies on may not function anymore
+(common examples are library modules or the warnings machinery).
+The main reason for interpreter shutdown is that the __main__ module
+or the script being run has finished executing.
+An object representing a stream of data.  Repeated calls to the iterator’s
+__next__() method (or passing it to the built-in function
+next()) return successive items in the stream.  When no more data
+are available a StopIteration exception is raised instead.  At this
+point, the iterator object is exhausted and any further calls to its
+__next__() method just raise StopIteration again.  Iterators
+are required to have an __iter__() method that returns the iterator
+object itself so every iterator is also iterable and may be used in most
+places where other iterables are accepted.  One notable exception is code
+which attempts multiple iteration passes.  A container object (such as a
+list) produces a fresh new iterator each time you pass it to the
+iter() function or use it in a for loop.  Attempting this
+with an iterator will just return the same exhausted iterator object used
+in the previous iteration pass, making it appear like an empty container.
+More information can be found in Iterator Types.
+A key function or collation function is a callable that returns a value
+used for sorting or ordering.  For example, locale.strxfrm() is
+used to produce a sort key that is aware of locale specific sort
+conventions.
+A number of tools in Python accept key functions to control how elements
+are ordered or grouped.  They include min(), max(),
+sorted(), list.sort(), heapq.merge(),
+heapq.nsmallest(), heapq.nlargest(), and
+itertools.groupby().
+There are several ways to create a key function.  For example. the
+str.lower() method can serve as a key function for case insensitive
+sorts.  Alternatively, a key function can be built from a
+lambda expression such as lambda r: (r[0], r[2]).  Also,
+the operator module provides three key function constructors:
+attrgetter(), itemgetter(), and
+methodcaller().  See the Sorting HOW TO for examples of how to create and use key functions.
+Look before you leap.  This coding style explicitly tests for
+pre-conditions before making calls or lookups.  This style contrasts with
+the EAFP approach and is characterized by the presence of many
+if statements.
+In a multi-threaded environment, the LBYL approach can risk introducing a
+race condition between “the looking” and “the leaping”.  For example, the
+code, if key in mapping: return mapping[key] can fail if another
+thread removes key from mapping after the test, but before the lookup.
+This issue can be solved with locks or by using the EAFP approach.
+A finder returned by a search of sys.meta_path.  Meta path
+finders are related to, but different from path entry finders.
+See importlib.abc.MetaPathFinder for the methods that meta path
+finders implement.
+The class of a class.  Class definitions create a class name, a class
+dictionary, and a list of base classes.  The metaclass is responsible for
+taking those three arguments and creating the class.  Most object oriented
+programming languages provide a default implementation.  What makes Python
+special is that it is possible to create custom metaclasses.  Most users
+never need this tool, but when the need arises, metaclasses can provide
+powerful, elegant solutions.  They have been used for logging attribute
+access, adding thread-safety, tracking object creation, implementing
+singletons, and many other tasks.
+More information can be found in Customizing class creation.
+An object that serves as an organizational unit of Python code.  Modules
+have a namespace containing arbitrary Python objects.  Modules are loaded
+into Python by the process of importing.
+See also package.
+Any tuple-like class whose indexable elements are also accessible using
+named attributes (for example, time.localtime() returns a
+tuple-like object where the year is accessible either with an
+index such as t[0] or with a named attribute like t.tm_year).
+A named tuple can be a built-in type such as time.struct_time,
+or it can be created with a regular class definition.  A full featured
+named tuple can also be created with the factory function
+collections.namedtuple().  The latter approach automatically
+provides extra features such as a self-documenting representation like
+Employee(name='jones', title='programmer').
+A PEP 420 package which serves only as a container for
+subpackages.  Namespace packages may have no physical representation,
+and specifically are not like a regular package because they
+have no __init__.py file.
+See also module.
+A Python module which can contain submodules or recursively,
+subpackages.  Technically, a package is a Python module with an
+__path__ attribute.
+See also regular package and namespace package.
+A named entity in a function (or method) definition that
+specifies an argument (or in some cases, arguments) that the
+function can accept.  There are five kinds of parameter:
+positional-or-keyword: specifies an argument that can be passed
+either positionally or as a keyword argument.  This is the default kind of parameter, for example foo
+and bar in the following:
+positional-only: specifies an argument that can be supplied only
+by position.  Python has no syntax for defining positional-only
+parameters.  However, some built-in functions have positional-only
+parameters (e.g. abs()).
+keyword-only: specifies an argument that can be supplied only
+by keyword.  Keyword-only parameters can be defined by including a
+single var-positional parameter or bare * in the parameter list
+of the function definition before them, for example kw_only1 and
+kw_only2 in the following:
+var-positional: specifies that an arbitrary sequence of
+positional arguments can be provided (in addition to any positional
+arguments already accepted by other parameters).  Such a parameter can
+be defined by prepending the parameter name with *, for example
+args in the following:
+var-keyword: specifies that arbitrarily many keyword arguments
+can be provided (in addition to any keyword arguments already accepted
+by other parameters).  Such a parameter can be defined by prepending
+the parameter name with **, for example kwargs in the example
+above.
+Parameters can specify both optional and required arguments, as well as
+default values for some optional arguments.
+See also the argument glossary entry, the FAQ question on
+the difference between arguments and parameters, the inspect.Parameter class, the
+Function definitions section, and PEP 362.
+A finder returned by a callable on sys.path_hooks
+(i.e. a path entry hook) which knows how to locate modules given
+a path entry.
+See importlib.abc.PathEntryFinder for the methods that path entry
+finders implement.
+A provisional API is one which has been deliberately excluded from
+the standard library’s backwards compatibility guarantees.  While major
+changes to such interfaces are not expected, as long as they are marked
+provisional, backwards incompatible changes (up to and including removal
+of the interface) may occur if deemed necessary by core developers.  Such
+changes will not be made gratuitously – they will occur only if serious
+fundamental flaws are uncovered that were missed prior to the inclusion
+of the API.
+Even for provisional APIs, backwards incompatible changes are seen as
+a “solution of last resort” - every attempt will still be made to find
+a backwards compatible resolution to any identified problems.
+This process allows the standard library to continue to evolve over
+time, without locking in problematic design errors for extended periods
+of time.  See PEP 411 for more details.
+An idea or piece of code which closely follows the most common idioms
+of the Python language, rather than implementing code using concepts
+common to other languages.  For example, a common idiom in Python is
+to loop over all elements of an iterable using a for
+statement.  Many other languages don’t have this type of construct, so
+people unfamiliar with Python sometimes use a numerical counter instead:
+As opposed to the cleaner, Pythonic method:
+A dotted name showing the “path” from a module’s global scope to a
+class, function or method defined in that module, as defined in
+PEP 3155.  For top-level functions and classes, the qualified name
+is the same as the object’s name:
+When used to refer to modules, the fully qualified name means the
+entire dotted path to the module, including any parent packages,
+e.g. email.mime.text:
+A traditional package, such as a directory containing an
+__init__.py file.
+See also namespace package.
+An iterable which supports efficient element access using integer
+indices via the __getitem__() special method and defines a
+__len__() method that returns the length of the sequence.
+Some built-in sequence types are list, str,
+tuple, and bytes. Note that dict also
+supports __getitem__() and __len__(), but is considered a
+mapping rather than a sequence because the lookups use arbitrary
+immutable keys rather than integers.
+The collections.abc.Sequence abstract base class
+defines a much richer interface that goes beyond just
+__getitem__() and __len__(), adding count(),
+index(), __contains__(), and
+__reversed__(). Types that implement this expanded
+interface can be registered explicitly using
+register().
+A file object able to read and write str objects.
+Often, a text file actually accesses a byte-oriented datastream
+and handles the text encoding automatically.
+See also
+A binary file reads and write bytes objects.
+A cooperatively isolated runtime environment that allows Python users
+and applications to install and upgrade Python distribution packages
+without interfering with the behaviour of other Python applications
+running on the same system.
+See also pyvenv - Creating virtual environments.
+“Why is Python Installed on my Computer?” FAQ
+About these documents
+
+    Enter search terms or a module, class or function name.
+    
+

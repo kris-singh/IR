@@ -1,0 +1,124 @@
+URL: https://docs.python.org/3/library/asyncio-dev.html
+
+Title: 18.5.9. Develop with asyncio — Python 3.5.2 documentation
+
+Doc Id: 421
+
+Meta Tags : No meta tag found in document
+
+Date :Aug 08, 2016
+
+Content :Asynchronous programming is different than classical “sequential” programming.
+This page lists common traps and explains how to avoid them.
+The implementation of asyncio has been written for performance.
+In order to ease the development of asynchronous code, you may wish to
+enable debug mode.
+To enable all debug checks for an application:
+Examples debug checks:
+See also
+The AbstractEventLoop.set_debug() method and the asyncio logger.
+Cancellation of tasks is not common in classic programming. In asynchronous
+programming, not only it is something common, but you have to prepare your
+code to handle it.
+Futures and tasks can be cancelled explicitly with their Future.cancel()
+method. The wait_for() function cancels the waited task when the timeout
+occurs. There are many other cases where a task can be cancelled indirectly.
+Don’t call set_result() or set_exception() method
+of Future if the future is cancelled: it would fail with an exception.
+For example, write:
+Don’t schedule directly a call to the set_result() or the
+set_exception() method of a future with
+AbstractEventLoop.call_soon(): the future can be cancelled before its method
+is called.
+If you wait for a future, you should check early if the future was cancelled to
+avoid useless operations. Example:
+The shield() function can also be used to ignore cancellation.
+An event loop runs in a thread and executes all callbacks and tasks in the same
+thread. While a task is running in the event loop, no other task is running in
+the same thread. But when the task uses yield from, the task is suspended
+and the event loop executes the next task.
+To schedule a callback from a different thread, the
+AbstractEventLoop.call_soon_threadsafe() method should be used. Example:
+Most asyncio objects are not thread safe. You should only worry if you access
+objects outside the event loop. For example, to cancel a future, don’t call
+directly its Future.cancel() method, but:
+To handle signals and to execute subprocesses, the event loop must be run in
+the main thread.
+To schedule a coroutine object from a different thread, the
+run_coroutine_threadsafe() function should be used. It returns a
+concurrent.futures.Future to access the result:
+The AbstractEventLoop.run_in_executor() method can be used with a thread pool
+executor to execute a callback in different thread to not block the thread of
+the event loop.
+See also
+The Synchronization primitives section describes ways
+to synchronize tasks.
+The Subprocess and threads section lists
+asyncio limitations to run subprocesses from different threads.
+Blocking functions should not be called directly. For example, if a function
+blocks for 1 second, other tasks are delayed by 1 second which can have an
+important impact on reactivity.
+For networking and subprocesses, the asyncio module provides high-level
+APIs like protocols.
+An executor can be used to run a task in a different thread or even in a
+different process, to not block the thread of the event loop. See the
+AbstractEventLoop.run_in_executor() method.
+See also
+The Delayed calls section details how the
+event loop handles time.
+The asyncio module logs information with the logging module in
+the logger 'asyncio'.
+When a coroutine function is called and its result is not passed to
+ensure_future() or to the AbstractEventLoop.create_task() method,
+the execution of the coroutine object will never be scheduled which is
+probably a bug.  Enable the debug mode of asyncio
+to log a warning to detect it.
+Example with the bug:
+Output in debug mode:
+The fix is to call the ensure_future() function or the
+AbstractEventLoop.create_task() method with the coroutine object.
+See also
+Pending task destroyed.
+Python usually calls sys.displayhook() on unhandled exceptions. If
+Future.set_exception() is called, but the exception is never consumed,
+sys.displayhook() is not called. Instead, a log is emitted when the future is deleted by the garbage collector, with the
+traceback where the exception was raised.
+Example of unhandled exception:
+Output:
+Enable the debug mode of asyncio to get the
+traceback where the task was created. Output in debug mode:
+There are different options to fix this issue. The first option is to chain the
+coroutine in another coroutine and use classic try/except:
+Another option is to use the AbstractEventLoop.run_until_complete()
+function:
+See also
+The Future.exception() method.
+When a coroutine function calls other coroutine functions and tasks, they
+should be chained explicitly with yield from. Otherwise, the execution is
+not guaranteed to be sequential.
+Example with different bugs using asyncio.sleep() to simulate slow
+operations:
+Expected output:
+Actual output:
+The loop stopped before the create() finished, close() has been called
+before write(), whereas coroutine functions were called in this order:
+create(), write(), close().
+To fix the example, tasks must be marked with yield from:
+Or without asyncio.ensure_future():
+If a pending task is destroyed, the execution of its wrapped coroutine did not complete. It is probably a bug and so a warning is logged.
+Example of log:
+Enable the debug mode of asyncio to get the
+traceback where the task was created. Example of log in debug mode:
+See also
+Detect coroutine objects never scheduled.
+When a transport is no more needed, call its close() method to release
+resources. Event loops must also be closed explicitly.
+If a transport or an event loop is not closed explicitly, a
+ResourceWarning warning will be emitted in its destructor. By default,
+ResourceWarning warnings are ignored. The Debug mode of asyncio section explains how to display them.
+18.5.8. Queues
+18.6. asyncore — Asynchronous socket handler
+
+    Enter search terms or a module, class or function name.
+    
+

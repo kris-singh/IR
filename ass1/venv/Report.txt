@@ -1,0 +1,26 @@
+Group Members: 1) Abhishek jain (CS16MTECH11001)
+	       2) Varun Mishra  (CS16MTECH11018)
+	       3) Krishna Kant Singh (CS15MTECH11007)
+
+Crawled Website Details:
+	       Type: E-Learning
+	       URL: https://www.python.org
+	       Type: E-learning
+	       URL: https://https://docs.python.org/3.4/
+	       Type: E-learning
+	       URL: https://docs.python.org/3/
+	       Type: E-learning
+	       URl: https://www.indiatimes.com/
+	       Type: News
+	       Problem:UTF-8 Encoding problems 
+
+Details of Crawled Data:
+		   Url Seed: https://https://docs.python.org/3.4/
+	       No. of files:547
+	       Size :  6.2Mb
+	       Url Seed: https://docs.python.org/3/
+	       No of files:535
+	       Size: 6 Mb
+
+
+

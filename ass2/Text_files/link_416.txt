@@ -1,0 +1,252 @@
+URL: https://docs.python.org/3/library/asyncio-protocol.html
+
+Title: 18.5.4. Transports and protocols (callback based API) — Python 3.5.2 documentation
+
+Doc Id: 416
+
+Meta Tags : No meta tag found in document
+
+Date :Aug 20, 2016
+
+Content :Transports are classes provided by asyncio in order to abstract
+various kinds of communication channels.  You generally won’t instantiate
+a transport yourself; instead, you will call an AbstractEventLoop method
+which will create the transport and try to initiate the underlying
+communication channel, calling you back when it succeeds.
+Once the communication channel is established, a transport is always
+paired with a protocol instance.  The protocol can
+then call the transport’s methods for various purposes.
+asyncio currently implements transports for TCP, UDP, SSL, and
+subprocess pipes.  The methods available on a transport depend on
+the transport’s kind.
+The transport classes are not thread safe.
+Base class for transports.
+Close the transport.  If the transport has a buffer for outgoing
+data, buffered data will be flushed asynchronously.  No more data
+will be received.  After all buffered data is flushed, the
+protocol’s connection_lost() method will be called with
+None as its argument.
+Return True if the transport is closing or is closed.
+New in version 3.5.1.
+Return optional transport information.  name is a string representing
+the piece of transport-specific information to get, default is the
+value to return if the information doesn’t exist.
+This method allows transport implementations to easily expose
+channel-specific information.
+Changed in version 3.5.1: 'ssl_object' info was added to SSL sockets.
+Interface for read-only transports.
+Pause the receiving end of the transport.  No data will be passed to
+the protocol’s data_received() method until resume_reading()
+is called.
+Resume the receiving end.  The protocol’s data_received() method
+will be called once again if some data is available for reading.
+Interface for write-only transports.
+Close the transport immediately, without waiting for pending operations
+to complete.  Buffered data will be lost.  No more data will be received.
+The protocol’s connection_lost() method will eventually be
+called with None as its argument.
+Return True if the transport supports write_eof(),
+False if not.
+Return the current size of the output buffer used by the transport.
+Get the high- and low-water limits for write flow control. Return a
+tuple (low, high) where low and high are positive number of
+bytes.
+Use set_write_buffer_limits() to set the limits.
+New in version 3.4.2.
+Set the high- and low-water limits for write flow control.
+These two values control when call the protocol’s
+pause_writing() and resume_writing() methods are called.
+If specified, the low-water limit must be less than or equal to the
+high-water limit.  Neither high nor low can be negative.
+The defaults are implementation-specific.  If only the
+high-water limit is given, the low-water limit defaults to an
+implementation-specific value less than or equal to the
+high-water limit.  Setting high to zero forces low to zero as
+well, and causes pause_writing() to be called whenever the
+buffer becomes non-empty.  Setting low to zero causes
+resume_writing() to be called only once the buffer is empty.
+Use of zero for either limit is generally sub-optimal as it
+reduces opportunities for doing I/O and computation
+concurrently.
+Use get_write_buffer_limits() to get the limits.
+Write some data bytes to the transport.
+This method does not block; it buffers the data and arranges for it
+to be sent out asynchronously.
+Write a list (or any iterable) of data bytes to the transport.
+This is functionally equivalent to calling write() on each
+element yielded by the iterable, but may be implemented more efficiently.
+Close the write end of the transport after flushing buffered data.
+Data may still be received.
+This method can raise NotImplementedError if the transport
+(e.g. SSL) doesn’t support half-closes.
+Send the data bytes to the remote peer given by addr (a
+transport-dependent target address).  If addr is None, the
+data is sent to the target address given on transport creation.
+This method does not block; it buffers the data and arranges for it
+to be sent out asynchronously.
+Close the transport immediately, without waiting for pending operations
+to complete.  Buffered data will be lost.  No more data will be received.
+The protocol’s connection_lost() method will eventually be
+called with None as its argument.
+Return the subprocess process id as an integer.
+Return the transport for the communication pipe corresponding to the
+integer file descriptor fd:
+Return the subprocess returncode as an integer or None
+if it hasn’t returned, similarly to the
+subprocess.Popen.returncode attribute.
+Kill the subprocess, as in subprocess.Popen.kill().
+On POSIX systems, the function sends SIGKILL to the subprocess.
+On Windows, this method is an alias for terminate().
+Send the signal number to the subprocess, as in
+subprocess.Popen.send_signal().
+Ask the subprocess to stop, as in subprocess.Popen.terminate().
+This method is an alias for the close() method.
+On POSIX systems, this method sends SIGTERM to the subprocess.
+On Windows, the Windows API function TerminateProcess() is called to
+stop the subprocess.
+Ask the subprocess to stop by calling the terminate() method if the
+subprocess hasn’t returned yet, and close transports of all pipes
+(stdin, stdout and stderr).
+asyncio provides base classes that you can subclass to implement
+your network protocols.  Those classes are used in conjunction with
+transports (see below): the protocol parses incoming
+data and asks for the writing of outgoing data, while the transport is
+responsible for the actual I/O and buffering.
+When subclassing a protocol class, it is recommended you override certain
+methods.  Those methods are callbacks: they will be called by the transport
+on certain events (for example when some data is received); you shouldn’t
+call them yourself, unless you are implementing a transport.
+Note
+All callbacks have default implementations, which are empty.  Therefore,
+you only need to implement the callbacks for the events in which you
+are interested.
+The base class for implementing streaming protocols (for use with
+e.g. TCP and SSL transports).
+The base class for implementing datagram protocols (for use with
+e.g. UDP transports).
+The base class for implementing protocols communicating with child
+processes (through a set of unidirectional pipes).
+These callbacks may be called on Protocol, DatagramProtocol
+and SubprocessProtocol instances:
+Called when a connection is made.
+The transport argument is the transport representing the
+connection.  You are responsible for storing it somewhere
+(e.g. as an attribute) if you need to.
+Called when the connection is lost or closed.
+The argument is either an exception object or None.
+The latter means a regular EOF is received, or the connection was
+aborted or closed by this side of the connection.
+connection_made() and connection_lost()
+are called exactly once per successful connection.  All other callbacks will be
+called between those two methods, which allows for easier resource management
+in your protocol implementation.
+The following callbacks may be called only on SubprocessProtocol
+instances:
+Called when the child process writes data into its stdout or stderr pipe.
+fd is the integer file descriptor of the pipe.  data is a non-empty
+bytes object containing the data.
+Called when one of the pipes communicating with the child process
+is closed.  fd is the integer file descriptor that was closed.
+Called when the child process has exited.
+The following callbacks are called on Protocol instances:
+Called when some data is received.  data is a non-empty bytes object
+containing the incoming data.
+Note
+Whether the data is buffered, chunked or reassembled depends on
+the transport.  In general, you shouldn’t rely on specific semantics
+and instead make your parsing generic and flexible enough.  However,
+data is always received in the correct order.
+Calls when the other end signals it won’t send any more data
+(for example by calling write_eof(), if the other end also uses
+asyncio).
+This method may return a false value (including None), in which case
+the transport will close itself.  Conversely, if this method returns a
+true value, closing the transport is up to the protocol.  Since the
+default implementation returns None, it implicitly closes the connection.
+Note
+Some transports such as SSL don’t support half-closed connections,
+in which case returning true from this method will not prevent closing
+the connection.
+data_received() can be called an arbitrary number of times during
+a connection.  However, eof_received() is called at most once
+and, if called, data_received() won’t be called after it.
+State machine:
+The following callbacks are called on DatagramProtocol instances.
+Called when a datagram is received.  data is a bytes object containing
+the incoming data.  addr is the address of the peer sending the data;
+the exact format depends on the transport.
+Called when a previous send or receive operation raises an
+OSError.  exc is the OSError instance.
+This method is called in rare conditions, when the transport (e.g. UDP)
+detects that a datagram couldn’t be delivered to its recipient.
+In many conditions though, undeliverable datagrams will be silently
+dropped.
+These callbacks may be called on Protocol,
+DatagramProtocol and SubprocessProtocol instances:
+Called when the transport’s buffer goes over the high-water mark.
+Called when the transport’s buffer drains below the low-water mark.
+pause_writing() and resume_writing() calls are paired –
+pause_writing() is called once when the buffer goes strictly over
+the high-water mark (even if subsequent writes increases the buffer size
+even more), and eventually resume_writing() is called once when the
+buffer size reaches the low-water mark.
+Note
+If the buffer size equals the high-water mark,
+pause_writing() is not called – it must go strictly over.
+Conversely, resume_writing() is called when the buffer size is
+equal or lower than the low-water mark.  These end conditions
+are important to ensure that things go as expected when either
+mark is zero.
+Note
+On BSD systems (OS X, FreeBSD, etc.) flow control is not supported
+for DatagramProtocol, because send failures caused by
+writing too many packets cannot be detected easily.  The socket
+always appears ‘ready’ and excess packets are dropped; an
+OSError with errno set to errno.ENOBUFS may or
+may not be raised; if it is raised, it will be reported to
+DatagramProtocol.error_received() but otherwise ignored.
+Coroutines can be scheduled in a protocol method using ensure_future(),
+but there is no guarantee made about the execution order.  Protocols are not
+aware of coroutines created in protocol methods and so will not wait for them.
+To have a reliable execution order, use stream objects in a
+coroutine with yield from. For example, the StreamWriter.drain()
+coroutine can be used to wait until the write buffer is flushed.
+TCP echo client  using the AbstractEventLoop.create_connection() method, send
+data and wait until the connection is closed:
+The event loop is running twice. The
+run_until_complete() method is preferred in this short
+example to raise an exception if the server is not listening, instead of
+having to write a short coroutine to handle the exception and stop the
+running loop. At run_until_complete() exit, the loop is
+no longer running, so there is no need to stop the loop in case of an error.
+See also
+The TCP echo client using streams
+example uses the asyncio.open_connection() function.
+TCP echo server using the AbstractEventLoop.create_server() method, send back
+received data and close the connection:
+Transport.close() can be called immediately after
+WriteTransport.write() even if data are not sent yet on the socket: both
+methods are asynchronous. yield from is not needed because these transport
+methods are not coroutines.
+See also
+The TCP echo server using streams
+example uses the asyncio.start_server() function.
+UDP echo client using the AbstractEventLoop.create_datagram_endpoint()
+method, send data and close the transport when we received the answer:
+UDP echo server using the AbstractEventLoop.create_datagram_endpoint()
+method, send back received data:
+Wait until a socket receives data using the
+AbstractEventLoop.create_connection() method with a protocol, and then close
+the event loop
+See also
+The watch a file descriptor for read events example uses the low-level
+AbstractEventLoop.add_reader() method to register the file descriptor of a
+socket.
+The register an open socket to wait for data using streams example uses high-level streams
+created by the open_connection() function in a coroutine.
+18.5.3. Tasks and coroutines
+18.5.5. Streams (coroutine based API)
+
+    Enter search terms or a module, class or function name.
+    
+

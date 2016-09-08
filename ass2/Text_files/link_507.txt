@@ -1,0 +1,43 @@
+URL: https://docs.python.org/3/c-api/objbuffer.html
+
+Title: Old Buffer Protocol — Python 3.5.2 documentation
+
+Doc Id: 507
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :Deprecated since version 3.0.
+These functions were part of the “old buffer protocol” API in Python 2.
+In Python 3, this protocol doesn’t exist anymore but the functions are still
+exposed to ease porting 2.x code.  They act as a compatibility wrapper
+around the new buffer protocol, but they don’t give
+you control over the lifetime of the resources acquired when a buffer is
+exported.
+Therefore, it is recommended that you call PyObject_GetBuffer()
+(or the y* or w* format codes with the
+PyArg_ParseTuple() family of functions) to get a buffer view over
+an object, and PyBuffer_Release() when the buffer view can be released.
+Returns a pointer to a read-only memory location usable as character-based
+input.  The obj argument must support the single-segment character buffer
+interface.  On success, returns 0, sets buffer to the memory location
+and buffer_len to the buffer length.  Returns -1 and sets a
+TypeError on error.
+Returns a pointer to a read-only memory location containing arbitrary data.
+The obj argument must support the single-segment readable buffer
+interface.  On success, returns 0, sets buffer to the memory location
+and buffer_len to the buffer length.  Returns -1 and sets a
+TypeError on error.
+Returns 1 if o supports the single-segment readable buffer interface.
+Otherwise returns 0.
+Returns a pointer to a writable memory location.  The obj argument must
+support the single-segment, character buffer interface.  On success,
+returns 0, sets buffer to the memory location and buffer_len to the
+buffer length.  Returns -1 and sets a TypeError on error.
+Buffer Protocol
+Concrete Objects Layer
+
+    Enter search terms or a module, class or function name.
+    
+

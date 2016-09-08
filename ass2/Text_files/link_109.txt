@@ -1,0 +1,113 @@
+URL: https://docs.python.org/3/library/hashlib.html
+
+Title: 15.1. hashlib — Secure hashes and message digests — Python 3.5.2 documentation
+
+Doc Id: 109
+
+Meta Tags : No meta tag found in document
+
+Date :Aug 10, 2016
+
+Content :Source code: Lib/hashlib.py
+This module implements a common interface to many different secure hash and
+message digest algorithms.  Included are the FIPS secure hash algorithms SHA1,
+SHA224, SHA256, SHA384, and SHA512 (defined in FIPS 180-2) as well as RSA’s MD5
+algorithm (defined in Internet RFC 1321).  The terms “secure hash” and
+“message digest” are interchangeable.  Older algorithms were called message
+digests.  The modern term is secure hash.
+Note
+If you want the adler32 or crc32 hash functions, they are available in
+the zlib module.
+Warning
+Some algorithms have known hash collision weaknesses, refer to the “See
+also” section at the end.
+There is one constructor method named for each type of hash.  All return
+a hash object with the same simple interface. For example: use sha1() to
+create a SHA1 hash object. You can now feed this object with bytes-like
+objects (normally bytes) using the update() method.
+At any point you can ask it for the digest of the
+concatenation of the data fed to it so far using the digest() or
+hexdigest() methods.
+Note
+For better multithreading performance, the Python GIL is released for
+data larger than 2047 bytes at object creation or on update.
+Note
+Feeding string objects into update() is not supported, as hashes work
+on bytes, not on characters.
+Constructors for hash algorithms that are always present in this module are
+md5(), sha1(), sha224(), sha256(), sha384(),
+and sha512(). Additional algorithms may also be available depending upon
+the OpenSSL library that Python uses on your platform.
+For example, to obtain the digest of the byte string b'Nobody inspects the
+spammish repetition':
+More condensed:
+Is a generic constructor that takes the string name of the desired
+algorithm as its first parameter.  It also exists to allow access to the
+above listed hashes as well as any other algorithms that your OpenSSL
+library may offer.  The named constructors are much faster than new()
+and should be preferred.
+Using new() with an algorithm provided by OpenSSL:
+Hashlib provides the following constant attributes:
+A set containing the names of the hash algorithms guaranteed to be supported
+by this module on all platforms.
+New in version 3.2.
+A set containing the names of the hash algorithms that are available in the
+running Python interpreter.  These names will be recognized when passed to
+new().  algorithms_guaranteed will always be a subset.  The
+same algorithm may appear multiple times in this set under different names
+(thanks to OpenSSL).
+New in version 3.2.
+The following values are provided as constant attributes of the hash objects
+returned by the constructors:
+The size of the resulting hash in bytes.
+The internal block size of the hash algorithm in bytes.
+A hash object has the following attributes:
+The canonical name of this hash, always lowercase and always suitable as a
+parameter to new() to create another hash of this type.
+Changed in version 3.4: The name attribute has been present in CPython since its inception, but
+until Python 3.4 was not formally specified, so may not exist on some
+platforms.
+A hash object has the following methods:
+Update the hash object with the object arg, which must be interpretable as
+a buffer of bytes.  Repeated calls are equivalent to a single call with the
+concatenation of all the arguments: m.update(a); m.update(b) is
+equivalent to m.update(a+b).
+Changed in version 3.1: The Python GIL is released to allow other threads to run while hash
+updates on data larger than 2047 bytes is taking place when using hash
+algorithms supplied by OpenSSL.
+Return the digest of the data passed to the update() method so far.
+This is a bytes object of size digest_size which may contain bytes in
+the whole range from 0 to 255.
+Like digest() except the digest is returned as a string object of
+double length, containing only hexadecimal digits.  This may be used to
+exchange the value safely in email or other non-binary environments.
+Return a copy (“clone”) of the hash object.  This can be used to efficiently
+compute the digests of data sharing a common initial substring.
+Key derivation and key stretching algorithms are designed for secure password
+hashing. Naive algorithms such as sha1(password) are not resistant against
+brute-force attacks. A good password hashing function must be tunable, slow, and
+include a salt.
+The function provides PKCS#5 password-based key derivation function 2. It
+uses HMAC as pseudorandom function.
+The string hash_name is the desired name of the hash digest algorithm for
+HMAC, e.g. ‘sha1’ or ‘sha256’. password and salt are interpreted as
+buffers of bytes. Applications and libraries should limit password to
+a sensible length (e.g. 1024). salt should be about 16 or more bytes from
+a proper source, e.g. os.urandom().
+The number of iterations should be chosen based on the hash algorithm and
+computing power. As of 2013, at least 100,000 iterations of SHA-256 are
+suggested.
+dklen is the length of the derived key. If dklen is None then the
+digest size of the hash algorithm hash_name is used, e.g. 64 for SHA-512.
+New in version 3.4.
+Note
+A fast implementation of pbkdf2_hmac is available with OpenSSL.  The
+Python implementation uses an inline version of hmac. It is about
+three times slower and doesn’t release the GIL.
+See also
+15. Cryptographic Services
+15.2. hmac — Keyed-Hashing for Message Authentication
+
+    Enter search terms or a module, class or function name.
+    
+

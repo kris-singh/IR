@@ -1,0 +1,32 @@
+URL: https://docs.python.org/3/c-api/reflection.html
+
+Title: Reflection — Python 3.5.2 documentation
+
+Doc Id: 504
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :Return a dictionary of the builtins in the current execution frame,
+or the interpreter of the thread state if no frame is currently executing.
+Return a dictionary of the local variables in the current execution frame,
+or NULL if no frame is currently executing.
+Return a dictionary of the global variables in the current execution frame,
+or NULL if no frame is currently executing.
+Return the current thread state’s frame, which is NULL if no frame is
+currently executing.
+Return the line number that frame is currently executing.
+Return the name of func if it is a function, class or instance object, else the
+name of funcs type.
+Return a description string, depending on the type of func.
+Return values include “()” for functions and methods, ” constructor”,
+” instance”, and ” object”.  Concatenated with the result of
+PyEval_GetFuncName(), the result will be a description of
+func.
+String conversion and formatting
+Codec registry and support functions
+
+    Enter search terms or a module, class or function name.
+    
+

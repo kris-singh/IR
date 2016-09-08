@@ -1,0 +1,85 @@
+URL: https://docs.python.org/3/tutorial/stdlib.html
+
+Title: 10. Brief Tour of the Standard Library — Python 3.5.2 documentation
+
+Doc Id: 37
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :The os module provides dozens of functions for interacting with the
+operating system:
+Be sure to use the import os style instead of from os import *.  This
+will keep os.open() from shadowing the built-in open() function which
+operates much differently.
+The built-in dir() and help() functions are useful as interactive
+aids for working with large modules like os:
+For daily file and directory management tasks, the shutil module provides
+a higher level interface that is easier to use:
+The glob module provides a function for making file lists from directory
+wildcard searches:
+Common utility scripts often need to process command line arguments. These
+arguments are stored in the sys module’s argv attribute as a list.  For
+instance the following output results from running python demo.py one two
+three at the command line:
+The getopt module processes sys.argv using the conventions of the Unix
+getopt() function.  More powerful and flexible command line processing is
+provided by the argparse module.
+The sys module also has attributes for stdin, stdout, and stderr.
+The latter is useful for emitting warnings and error messages to make them
+visible even when stdout has been redirected:
+The most direct way to terminate a script is to use sys.exit().
+The re module provides regular expression tools for advanced string
+processing. For complex matching and manipulation, regular expressions offer
+succinct, optimized solutions:
+When only simple capabilities are needed, string methods are preferred because
+they are easier to read and debug:
+The math module gives access to the underlying C library functions for
+floating point math:
+The random module provides tools for making random selections:
+The statistics module calculates basic statistical properties
+(the mean, median, variance, etc.) of numeric data:
+The SciPy project <https://scipy.org> has many other modules for numerical
+computations.
+There are a number of modules for accessing the internet and processing internet
+protocols. Two of the simplest are urllib.request for retrieving data
+from URLs and smtplib for sending mail:
+(Note that the second example needs a mailserver running on localhost.)
+The datetime module supplies classes for manipulating dates and times in
+both simple and complex ways. While date and time arithmetic is supported, the
+focus of the implementation is on efficient member extraction for output
+formatting and manipulation.  The module also supports objects that are timezone
+aware.
+Common data archiving and compression formats are directly supported by modules
+including: zlib, gzip, bz2, lzma, zipfile and
+tarfile.
+Some Python users develop a deep interest in knowing the relative performance of
+different approaches to the same problem. Python provides a measurement tool
+that answers those questions immediately.
+For example, it may be tempting to use the tuple packing and unpacking feature
+instead of the traditional approach to swapping arguments. The timeit
+module quickly demonstrates a modest performance advantage:
+In contrast to timeit‘s fine level of granularity, the profile and
+pstats modules provide tools for identifying time critical sections in
+larger blocks of code.
+One approach for developing high quality software is to write tests for each
+function as it is developed and to run those tests frequently during the
+development process.
+The doctest module provides a tool for scanning a module and validating
+tests embedded in a program’s docstrings.  Test construction is as simple as
+cutting-and-pasting a typical call along with its results into the docstring.
+This improves the documentation by providing the user with an example and it
+allows the doctest module to make sure the code remains true to the
+documentation:
+The unittest module is not as effortless as the doctest module,
+but it allows a more comprehensive set of tests to be maintained in a separate
+file:
+Python has a “batteries included” philosophy.  This is best seen through the
+sophisticated and robust capabilities of its larger packages. For example:
+9. Classes
+11. Brief Tour of the Standard Library – Part II
+
+    Enter search terms or a module, class or function name.
+    
+

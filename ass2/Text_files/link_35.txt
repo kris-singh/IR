@@ -1,0 +1,136 @@
+URL: https://docs.python.org/3/tutorial/errors.html
+
+Title: 8. Errors and Exceptions — Python 3.5.2 documentation
+
+Doc Id: 35
+
+Meta Tags : No meta tag found in document
+
+Date :Aug 12, 2016
+
+Content :Until now error messages haven’t been more than mentioned, but if you have tried
+out the examples you have probably seen some.  There are (at least) two
+distinguishable kinds of errors: syntax errors and exceptions.
+Syntax errors, also known as parsing errors, are perhaps the most common kind of
+complaint you get while you are still learning Python:
+The parser repeats the offending line and displays a little ‘arrow’ pointing at
+the earliest point in the line where the error was detected.  The error is
+caused by (or at least detected at) the token preceding the arrow: in the
+example, the error is detected at the function print(), since a colon
+(':') is missing before it.  File name and line number are printed so you
+know where to look in case the input came from a script.
+Even if a statement or expression is syntactically correct, it may cause an
+error when an attempt is made to execute it. Errors detected during execution
+are called exceptions and are not unconditionally fatal: you will soon learn
+how to handle them in Python programs.  Most exceptions are not handled by
+programs, however, and result in error messages as shown here:
+The last line of the error message indicates what happened. Exceptions come in
+different types, and the type is printed as part of the message: the types in
+the example are ZeroDivisionError, NameError and TypeError.
+The string printed as the exception type is the name of the built-in exception
+that occurred.  This is true for all built-in exceptions, but need not be true
+for user-defined exceptions (although it is a useful convention). Standard
+exception names are built-in identifiers (not reserved keywords).
+The rest of the line provides detail based on the type of exception and what
+caused it.
+The preceding part of the error message shows the context where the exception
+happened, in the form of a stack traceback. In general it contains a stack
+traceback listing source lines; however, it will not display lines read from
+standard input.
+Built-in Exceptions lists the built-in exceptions and their meanings.
+It is possible to write programs that handle selected exceptions. Look at the
+following example, which asks the user for input until a valid integer has been
+entered, but allows the user to interrupt the program (using Control-C or
+whatever the operating system supports); note that a user-generated interruption
+is signalled by raising the KeyboardInterrupt exception.
+The try statement works as follows.
+A try statement may have more than one except clause, to specify
+handlers for different exceptions.  At most one handler will be executed.
+Handlers only handle exceptions that occur in the corresponding try clause, not
+in other handlers of the same try statement.  An except clause may
+name multiple exceptions as a parenthesized tuple, for example:
+The last except clause may omit the exception name(s), to serve as a wildcard.
+Use this with extreme caution, since it is easy to mask a real programming error
+in this way!  It can also be used to print an error message and then re-raise
+the exception (allowing a caller to handle the exception as well):
+The try ... except statement has an optional else
+clause, which, when present, must follow all except clauses.  It is useful for
+code that must be executed if the try clause does not raise an exception.  For
+example:
+The use of the else clause is better than adding additional code to
+the try clause because it avoids accidentally catching an exception
+that wasn’t raised by the code being protected by the try ...
+except statement.
+When an exception occurs, it may have an associated value, also known as the
+exception’s argument. The presence and type of the argument depend on the
+exception type.
+The except clause may specify a variable after the exception name.  The
+variable is bound to an exception instance with the arguments stored in
+instance.args.  For convenience, the exception instance defines
+__str__() so the arguments can be printed directly without having to
+reference .args.  One may also instantiate an exception first before
+raising it and add any attributes to it as desired.
+If an exception has arguments, they are printed as the last part (‘detail’) of
+the message for unhandled exceptions.
+Exception handlers don’t just handle exceptions if they occur immediately in the
+try clause, but also if they occur inside functions that are called (even
+indirectly) in the try clause. For example:
+The raise statement allows the programmer to force a specified
+exception to occur. For example:
+The sole argument to raise indicates the exception to be raised.
+This must be either an exception instance or an exception class (a class that
+derives from Exception).
+If you need to determine whether an exception was raised but don’t intend to
+handle it, a simpler form of the raise statement allows you to
+re-raise the exception:
+Programs may name their own exceptions by creating a new exception class (see
+Classes for more about Python classes).  Exceptions should typically
+be derived from the Exception class, either directly or indirectly.
+Exception classes can be defined which do anything any other class can do, but
+are usually kept simple, often only offering a number of attributes that allow
+information about the error to be extracted by handlers for the exception.  When
+creating a module that can raise several distinct errors, a common practice is
+to create a base class for exceptions defined by that module, and subclass that
+to create specific exception classes for different error conditions:
+Most exceptions are defined with names that end in “Error,” similar to the
+naming of the standard exceptions.
+Many standard modules define their own exceptions to report errors that may
+occur in functions they define.  More information on classes is presented in
+chapter Classes.
+The try statement has another optional clause which is intended to
+define clean-up actions that must be executed under all circumstances.  For
+example:
+A finally clause is always executed before leaving the try
+statement, whether an exception has occurred or not. When an exception has
+occurred in the try clause and has not been handled by an
+except clause (or it has occurred in an except or
+else clause), it is re-raised after the finally clause has
+been executed.  The finally clause is also executed “on the way out”
+when any other clause of the try statement is left via a
+break, continue or return statement.  A more
+complicated example:
+As you can see, the finally clause is executed in any event.  The
+TypeError raised by dividing two strings is not handled by the
+except clause and therefore re-raised after the finally
+clause has been executed.
+In real world applications, the finally clause is useful for
+releasing external resources (such as files or network connections), regardless
+of whether the use of the resource was successful.
+Some objects define standard clean-up actions to be undertaken when the object
+is no longer needed, regardless of whether or not the operation using the object
+succeeded or failed. Look at the following example, which tries to open a file
+and print its contents to the screen.
+The problem with this code is that it leaves the file open for an indeterminate
+amount of time after this part of the code has finished executing.
+This is not an issue in simple scripts, but can be a problem for larger
+applications. The with statement allows objects like files to be
+used in a way that ensures they are always cleaned up promptly and correctly.
+After the statement is executed, the file f is always closed, even if a
+problem was encountered while processing the lines. Objects which, like files,
+provide predefined clean-up actions will indicate this in their documentation.
+7. Input and Output
+9. Classes
+
+    Enter search terms or a module, class or function name.
+    
+

@@ -1,0 +1,75 @@
+URL: https://docs.python.org/3/library/numbers.html
+
+Title: 9.1. numbers — Numeric abstract base classes — Python 3.5.2 documentation
+
+Doc Id: 72
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :Source code: Lib/numbers.py
+The numbers module (PEP 3141) defines a hierarchy of numeric
+abstract base classes which progressively define
+more operations.  None of the types defined in this module can be instantiated.
+The root of the numeric hierarchy. If you just want to check if an argument
+x is a number, without caring what kind, use isinstance(x, Number).
+Subclasses of this type describe complex numbers and include the operations
+that work on the built-in complex type. These are: conversions to
+complex and bool, real, imag, +,
+-, *, /, abs(), conjugate(), ==, and !=. All
+except - and != are abstract.
+Abstract. Retrieves the real component of this number.
+Abstract. Retrieves the imaginary component of this number.
+Abstract. Returns the complex conjugate. For example, (1+3j).conjugate()
+== (1-3j).
+To Complex, Real adds the operations that work on real
+numbers.
+In short, those are: a conversion to float, math.trunc(),
+round(), math.floor(), math.ceil(), divmod(), //,
+%, <, <=, >, and >=.
+Real also provides defaults for complex(), real,
+imag, and conjugate().
+Subtypes Real and adds
+numerator and denominator properties, which
+should be in lowest terms. With these, it provides a default for
+float().
+Abstract.
+Abstract.
+Subtypes Rational and adds a conversion to int.  Provides
+defaults for float(), numerator, and
+denominator.  Adds abstract methods for ** and
+bit-string operations: <<, >>, &, ^, |, ~.
+Implementors should be careful to make equal numbers equal and hash
+them to the same values. This may be subtle if there are two different
+extensions of the real numbers. For example, fractions.Fraction
+implements hash() as follows:
+There are, of course, more possible ABCs for numbers, and this would
+be a poor hierarchy if it precluded the possibility of adding
+those. You can add MyFoo between Complex and
+Real with:
+We want to implement the arithmetic operations so that mixed-mode
+operations either call an implementation whose author knew about the
+types of both arguments, or convert both to the nearest built in type
+and do the operation there. For subtypes of Integral, this
+means that __add__() and __radd__() should be defined as:
+There are 5 different cases for a mixed-type operation on subclasses
+of Complex. I’ll refer to all of the above code that doesn’t
+refer to MyIntegral and OtherTypeIKnowAbout as
+“boilerplate”. a will be an instance of A, which is a subtype
+of Complex (a : A <: Complex), and b : B <:
+Complex. I’ll consider a + b:
+If A <: Complex and B <: Real without sharing any other knowledge,
+then the appropriate shared operation is the one involving the built
+in complex, and both __radd__() s land there, so a+b
+== b+a.
+Because most of the operations on any given type will be very similar,
+it can be useful to define a helper function which generates the
+forward and reverse instances of any given operator. For example,
+fractions.Fraction uses:
+9. Numeric and Mathematical Modules
+9.2. math — Mathematical functions
+
+    Enter search terms or a module, class or function name.
+    
+

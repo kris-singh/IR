@@ -1,0 +1,40 @@
+URL: https://docs.python.org/3/c-api/float.html
+
+Title: Floating Point Objects — Python 3.5.2 documentation
+
+Doc Id: 510
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :This subtype of PyObject represents a Python floating point object.
+This instance of PyTypeObject represents the Python floating point
+type.  This is the same object as float in the Python layer.
+Return true if its argument is a PyFloatObject or a subtype of
+PyFloatObject.
+Return true if its argument is a PyFloatObject, but not a subtype of
+PyFloatObject.
+Create a PyFloatObject object based on the string value in str, or
+NULL on failure.
+Create a PyFloatObject object from v, or NULL on failure.
+Return a C double representation of the contents of pyfloat.  If
+pyfloat is not a Python floating point object but has a __float__()
+method, this method will first be called to convert pyfloat into a float.
+This method returns -1.0 upon failure, so one should call
+PyErr_Occurred() to check for errors.
+Return a C double representation of the contents of pyfloat, but
+without error checking.
+Return a structseq instance which contains information about the
+precision, minimum and maximum values of a float. It’s a thin wrapper
+around the header file float.h.
+Return the maximum representable finite float DBL_MAX as C double.
+Return the minimum normalized positive float DBL_MIN as C double.
+Clear the float free list. Return the number of items that could not
+be freed.
+Boolean Objects
+Complex Number Objects
+
+    Enter search terms or a module, class or function name.
+    
+

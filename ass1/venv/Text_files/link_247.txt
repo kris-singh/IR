@@ -1,0 +1,34 @@
+URL: https://docs.python.org/3/library/token.html
+
+Title: 32.5. token — Constants used with Python parse trees — Python 3.5.2 documentation
+
+Doc Id: 247
+
+Meta Tags : No meta tag found in document
+
+Date :Aug 08, 2016
+
+Content :Source code: Lib/token.py
+This module provides constants which represent the numeric values of leaf nodes
+of the parse tree (terminal tokens).  Refer to the file Grammar/Grammar
+in the Python distribution for the definitions of the names in the context of
+the language grammar.  The specific numeric values which the names map to may
+change between Python versions.
+The module also provides a mapping from numeric codes to names and some
+functions.  The functions mirror definitions in the Python C header files.
+Dictionary mapping the numeric values of the constants defined in this module
+back to name strings, allowing more human-readable representation of parse trees
+to be generated.
+Return true for terminal token values.
+Return true for non-terminal token values.
+Return true if x is the marker indicating the end of input.
+The token constants are:
+Changed in version 3.5: Added AWAIT and ASYNC tokens. Starting with
+Python 3.7, “async” and “await” will be tokenized as NAME
+tokens, and AWAIT and ASYNC will be removed.
+32.4. symbol — Constants used with Python parse trees
+32.6. keyword — Testing for Python keywords
+
+    Enter search terms or a module, class or function name.
+    
+

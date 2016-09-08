@@ -1,0 +1,34 @@
+URL: https://docs.python.org/3/library/distutils.html
+
+Title: 28.1. distutils — Building and installing Python modules — Python 3.5.2 documentation
+
+Doc Id: 220
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :The distutils package provides support for building and installing
+additional modules into a Python installation.  The new modules may be either
+100%-pure Python, or may be extension modules written in C, or may be
+collections of Python packages which include modules coded in both Python and C.
+Most Python users will not want to use this module directly, but instead
+use the cross-version tools maintained by the Python Packaging Authority. In
+particular,
+setuptools is an
+enhanced alternative to distutils that provides:
+The recommended pip installer runs all
+setup.py scripts with setuptools, even if the script itself only
+imports distutils. Refer to the
+Python Packaging User Guide for more
+information.
+For the benefits of packaging tool authors and users seeking a deeper
+understanding of the details of the current packaging and distribution
+system, the legacy distutils based user documentation and API
+reference remain available:
+28. Software Packaging and Distribution
+28.2. ensurepip — Bootstrapping the pip installer
+
+    Enter search terms or a module, class or function name.
+    
+

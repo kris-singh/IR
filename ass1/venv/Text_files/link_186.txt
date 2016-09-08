@@ -1,0 +1,92 @@
+URL: https://docs.python.org/3/library/sunau.html
+
+Title: 22.3. sunau — Read and write Sun AU files — Python 3.5.2 documentation
+
+Doc Id: 186
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :Source code: Lib/sunau.py
+The sunau module provides a convenient interface to the Sun AU sound
+format.  Note that this module is interface-compatible with the modules
+aifc and wave.
+An audio file consists of a header followed by the data.  The fields of the
+header are:
+Apart from the info field, all header fields are 4 bytes in size. They are all
+32-bit unsigned integers encoded in big-endian byte order.
+The sunau module defines the following functions:
+If file is a string, open the file by that name, otherwise treat it as a
+seekable file-like object. mode can be any of
+Note that it does not allow read/write files.
+A mode of 'r' returns an AU_read object, while a mode of 'w'
+or 'wb' returns an AU_write object.
+A synonym for open(), maintained for backwards compatibility.
+The sunau module defines the following exception:
+An error raised when something is impossible because of Sun AU specs or
+implementation deficiency.
+The sunau module defines the following data items:
+An integer every valid Sun AU file begins with, stored in big-endian form.  This
+is the string .snd interpreted as an integer.
+Values of the encoding field from the AU header which are supported by this
+module.
+Additional known values of the encoding field from the AU header, but which are
+not supported by this module.
+AU_read objects, as returned by open() above, have the following methods:
+Close the stream, and make the instance unusable. (This is  called automatically
+on deletion.)
+Returns number of audio channels (1 for mone, 2 for stereo).
+Returns sample width in bytes.
+Returns sampling frequency.
+Returns number of audio frames.
+Returns compression type. Supported compression types are 'ULAW', 'ALAW'
+and 'NONE'.
+Human-readable version of getcomptype().  The supported types have the
+respective names 'CCITT G.711 u-law', 'CCITT G.711 A-law' and 'not
+compressed'.
+Returns a namedtuple() (nchannels, sampwidth,
+framerate, nframes, comptype, compname), equivalent to output of the
+get*() methods.
+Reads and returns at most n frames of audio, as a string of bytes.  The data
+will be returned in linear format.  If the original data is in u-LAW format, it
+will be converted.
+Rewind the file pointer to the beginning of the audio stream.
+The following two methods define a term “position” which is compatible between
+them, and is otherwise implementation dependent.
+Set the file pointer to the specified position.  Only values returned from
+tell() should be used for pos.
+Return current file pointer position.  Note that the returned value has nothing
+to do with the actual position in the file.
+The following two functions are defined for compatibility with the  aifc,
+and don’t do anything interesting.
+Returns None.
+Raise an error.
+AU_write objects, as returned by open() above, have the following methods:
+Set the number of channels.
+Set the sample width (in bytes.)
+Changed in version 3.4: Added support for 24-bit samples.
+Set the frame rate.
+Set the number of frames. This can be later changed, when and if more  frames
+are written.
+Set the compression type and description. Only 'NONE' and 'ULAW' are
+supported on output.
+The tuple should be (nchannels, sampwidth, framerate, nframes, comptype,
+compname), with values valid for the set*() methods.  Set all
+parameters.
+Return current position in the file, with the same disclaimer for the
+AU_read.tell() and AU_read.setpos() methods.
+Write audio frames, without correcting nframes.
+Changed in version 3.4: Any bytes-like object is now accepted.
+Write audio frames and make sure nframes is correct.
+Changed in version 3.4: Any bytes-like object is now accepted.
+Make sure nframes is correct, and close the file.
+This method is called upon deletion.
+Note that it is invalid to set any parameters after calling  writeframes()
+or writeframesraw().
+22.2. aifc — Read and write AIFF and AIFC files
+22.4. wave — Read and write WAV files
+
+    Enter search terms or a module, class or function name.
+    
+

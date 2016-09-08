@@ -1,0 +1,249 @@
+URL: https://docs.python.org/3/whatsnew/3.0.html
+
+Title: What’s New In Python 3.0 — Python 3.5.2 documentation
+
+Doc Id: 17
+
+Meta Tags : No meta tag found in document
+
+Date :Jul 29, 2016
+
+Content :This article explains the new features in Python 3.0, compared to 2.6.
+Python 3.0, also known as “Python 3000” or “Py3K”, is the first ever
+intentionally backwards incompatible Python release.  There are more
+changes than in a typical release, and more that are important for all
+Python users.  Nevertheless, after digesting the changes, you’ll find
+that Python really hasn’t changed all that much – by and large, we’re
+mostly fixing well-known annoyances and warts, and removing a lot of
+old cruft.
+This article doesn’t attempt to provide a complete specification of
+all new features, but instead tries to give a convenient overview.
+For full details, you should refer to the documentation for Python
+3.0, and/or the many PEPs referenced in the text. If you want to
+understand the complete implementation and design rationale for a
+particular feature, PEPs usually have more details than the regular
+documentation; but note that PEPs usually are not kept up-to-date once
+a feature has been fully implemented.
+Due to time constraints this document is not as complete as it should
+have been.  As always for a new release, the Misc/NEWS file in the
+source distribution contains a wealth of detailed information about
+every small thing that was changed.
+This section lists those few changes that are most likely to trip you
+up if you’re used to Python 2.5.
+The print statement has been replaced with a print()
+function, with keyword arguments to replace most of the special syntax
+of the old print statement (PEP 3105).  Examples:
+You can also customize the separator between items, e.g.:
+which produces:
+Note:
+Some well-known APIs no longer return lists:
+dict methods dict.keys(), dict.items() and
+dict.values() return “views” instead of lists.  For example,
+this no longer works: k = d.keys(); k.sort().  Use k =
+sorted(d) instead (this works in Python 2.5 too and is just
+as efficient).
+Also, the dict.iterkeys(), dict.iteritems() and
+dict.itervalues() methods are no longer supported.
+map() and filter() return iterators.  If you really need
+a list and the input sequences are all of equal length, a quick
+fix is to wrap map() in list(), e.g. list(map(...)),
+but a better fix is
+often to use a list comprehension (especially when the original code
+uses lambda), or rewriting the code so it doesn’t need a
+list at all.  Particularly tricky is map() invoked for the
+side effects of the function; the correct transformation is to use a
+regular for loop (since creating a list would just be
+wasteful).
+If the input sequences are not of equal length, map() will
+stop at the termination of the shortest of the sequences. For full
+compatibility with map() from Python 2.x, also wrap the sequences in
+itertools.zip_longest(), e.g. map(func, *sequences) becomes
+list(map(func, itertools.zip_longest(*sequences))).
+range() now behaves like xrange() used to behave, except
+it works with values of arbitrary size.  The latter no longer
+exists.
+zip() now returns an iterator.
+Python 3.0 has simplified the rules for ordering comparisons:
+Everything you thought you knew about binary data and Unicode has
+changed.
+This section gives a brief overview of every syntactic change in
+Python 3.0.
+PEP 3107: Function argument and return value annotations.  This
+provides a standardized way of annotating a function’s parameters
+and return value.  There are no semantics attached to such
+annotations except that they can be introspected at runtime using
+the __annotations__ attribute.  The intent is to encourage
+experimentation through metaclasses, decorators or frameworks.
+PEP 3102: Keyword-only arguments.  Named parameters occurring
+after *args in the parameter list must be specified using
+keyword syntax in the call.  You can also use a bare * in the
+parameter list to indicate that you don’t accept a variable-length
+argument list, but you do have keyword-only arguments.
+Keyword arguments are allowed after the list of base classes in a
+class definition.  This is used by the new convention for specifying
+a metaclass (see next section), but can be used for other purposes
+as well, as long as the metaclass supports it.
+PEP 3104: nonlocal statement.  Using nonlocal x
+you can now assign directly to a variable in an outer (but
+non-global) scope.  nonlocal is a new reserved word.
+PEP 3132: Extended Iterable Unpacking.  You can now write things
+like a, b, *rest = some_sequence.  And even *rest, a =
+stuff.  The rest object is always a (possibly empty) list; the
+right-hand side may be any iterable.  Example:
+This sets a to 0, b to 4, and rest to [1, 2, 3].
+Dictionary comprehensions: {k: v for k, v in stuff} means the
+same thing as dict(stuff) but is more flexible.  (This is
+PEP 274 vindicated. :-)
+Set literals, e.g. {1, 2}.  Note that {} is an empty
+dictionary; use set() for an empty set.  Set comprehensions are
+also supported; e.g., {x for x in stuff} means the same thing as
+set(stuff) but is more flexible.
+New octal literals, e.g. 0o720 (already in 2.6).  The old octal
+literals (0720) are gone.
+New binary literals, e.g. 0b1010 (already in 2.6), and
+there is a new corresponding built-in function, bin().
+Bytes literals are introduced with a leading b or B, and
+there is a new corresponding built-in function, bytes().
+PEP 3109 and PEP 3134: new raise statement syntax:
+raise [expr [from expr]].  See below.
+as and with are now reserved words.  (Since
+2.6, actually.)
+True, False, and None are reserved words.  (2.6 partially enforced
+the restrictions on None already.)
+Change from except exc, var to
+except exc as var.  See PEP 3110.
+PEP 3115: New Metaclass Syntax.  Instead of:
+you must now use:
+The module-global __metaclass__ variable is no longer
+supported.  (It was a crutch to make it easier to default to
+new-style classes without deriving every class from
+object.)
+List comprehensions no longer support the syntactic form
+[... for var in item1, item2, ...].  Use
+[... for var in (item1, item2, ...)] instead.
+Also note that list comprehensions have different semantics: they
+are closer to syntactic sugar for a generator expression inside a
+list() constructor, and in particular the loop control
+variables are no longer leaked into the surrounding scope.
+The ellipsis (...) can be used as an atomic expression
+anywhere.  (Previously it was only allowed in slices.)  Also, it
+must now be spelled as ....  (Previously it could also be
+spelled as . . ., by a mere accident of the grammar.)
+Since many users presumably make the jump straight from Python 2.5 to
+Python 3.0, this section reminds the reader of new features that were
+originally designed for Python 3.0 but that were back-ported to Python
+2.6.  The corresponding sections in What’s New in Python 2.6 should be
+consulted for longer descriptions.
+Due to time constraints, this document does not exhaustively cover the
+very extensive changes to the standard library.  PEP 3108 is the
+reference for the major changes to the library.  Here’s a capsule
+review:
+Many old modules were removed.  Some, like gopherlib (no
+longer used) and md5 (replaced by hashlib), were
+already deprecated by PEP 4.  Others were removed as a result
+of the removal of support for various platforms such as Irix, BeOS
+and Mac OS 9 (see PEP 11).  Some modules were also selected for
+removal in Python 3.0 due to lack of use or because a better
+replacement exists.  See PEP 3108 for an exhaustive list.
+The bsddb3 package was removed because its presence in the
+core standard library has proved over time to be a particular burden
+for the core developers due to testing instability and Berkeley DB’s
+release schedule.  However, the package is alive and well,
+externally maintained at https://www.jcea.es/programacion/pybsddb.htm.
+Some modules were renamed because their old name disobeyed
+PEP 8, or for various other reasons.  Here’s the list:
+A common pattern in Python 2.x is to have one version of a module
+implemented in pure Python, with an optional accelerated version
+implemented as a C extension; for example, pickle and
+cPickle.  This places the burden of importing the accelerated
+version and falling back on the pure Python version on each user of
+these modules.  In Python 3.0, the accelerated versions are
+considered implementation details of the pure Python versions.
+Users should always import the standard version, which attempts to
+import the accelerated version and falls back to the pure Python
+version.  The pickle / cPickle pair received this
+treatment.  The profile module is on the list for 3.1.  The
+StringIO module has been turned into a class in the io
+module.
+Some related modules have been grouped into packages, and usually
+the submodule names have been simplified.  The resulting new
+packages are:
+Some other changes to standard library modules, not covered by
+PEP 3108:
+The APIs for raising and catching exception have been cleaned up and
+new powerful features added:
+PEP 352: All exceptions must be derived (directly or indirectly)
+from BaseException.  This is the root of the exception
+hierarchy.  This is not new as a recommendation, but the
+requirement to inherit from BaseException is new.  (Python
+2.6 still allowed classic classes to be raised, and placed no
+restriction on what you can catch.)  As a consequence, string
+exceptions are finally truly and utterly dead.
+Almost all exceptions should actually derive from Exception;
+BaseException should only be used as a base class for
+exceptions that should only be handled at the top level, such as
+SystemExit or KeyboardInterrupt.  The recommended
+idiom for handling all exceptions except for this latter category is
+to use except Exception.
+StandardError was removed.
+Exceptions no longer behave as sequences.  Use the args
+attribute instead.
+PEP 3109: Raising exceptions.  You must now use raise
+Exception(args) instead of raise Exception, args.
+Additionally, you can no longer explicitly specify a traceback;
+instead, if you have to do this, you can assign directly to the
+__traceback__ attribute (see below).
+PEP 3110: Catching exceptions.  You must now use
+except SomeException as variable instead
+of except SomeException, variable.  Moreover, the
+variable is explicitly deleted when the except block
+is left.
+PEP 3134: Exception chaining.  There are two cases: implicit
+chaining and explicit chaining.  Implicit chaining happens when an
+exception is raised in an except or finally
+handler block.  This usually happens due to a bug in the handler
+block; we call this a secondary exception.  In this case, the
+original exception (that was being handled) is saved as the
+__context__ attribute of the secondary exception.
+Explicit chaining is invoked with this syntax:
+(where primary_exception is any expression that produces an
+exception object, probably an exception that was previously caught).
+In this case, the primary exception is stored on the
+__cause__ attribute of the secondary exception.  The
+traceback printed when an unhandled exception occurs walks the chain
+of __cause__ and __context__ attributes and prints a
+separate traceback for each component of the chain, with the primary
+exception at the top.  (Java users may recognize this behavior.)
+PEP 3134: Exception objects now store their traceback as the
+__traceback__ attribute.  This means that an exception
+object now contains all the information pertaining to an exception,
+and there are fewer reasons to use sys.exc_info() (though the
+latter is not removed).
+A few exception messages are improved when Windows fails to load an
+extension module.  For example, error code 193 is now %1 is
+not a valid Win32 application.  Strings now deal with non-English
+locales.
+Due to time constraints, here is a very incomplete list of changes
+to the C API.
+The net result of the 3.0 generalizations is that Python 3.0 runs the
+pystone benchmark around 10% slower than Python 2.5.  Most likely the
+biggest cause is the removal of special-casing for small integers.
+There’s room for improvement, but it will happen after 3.0 is
+released!
+For porting existing Python 2.5 or 2.6 source code to Python 3.0, the
+best strategy is the following:
+It is not recommended to try to write source code that runs unchanged
+under both Python 2.6 and 3.0; you’d have to use a very contorted
+coding style, e.g. avoiding print statements, metaclasses,
+and much more.  If you are maintaining a library that needs to support
+both Python 2.6 and Python 3.0, the best approach is to modify step 3
+above by editing the 2.6 version of the source code and running the
+2to3 translator again, rather than editing the 3.0 version of the
+source code.
+For porting C extensions to Python 3.0, please see Porting Extension Modules to Python 3.
+What’s New In Python 3.1
+What’s New in Python 2.7
+
+    Enter search terms or a module, class or function name.
+    
+

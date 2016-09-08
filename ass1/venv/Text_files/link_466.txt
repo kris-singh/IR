@@ -1,0 +1,34 @@
+URL: https://docs.python.org/3/library/othergui.html
+
+Title: 25.6. Other Graphical User Interface Packages — Python 3.5.2 documentation
+
+Doc Id: 466
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :Major cross-platform (Windows, Mac OS X, Unix-like) GUI toolkits are
+available for Python:
+See also
+provides introspection bindings for C libraries using
+GObject.  One of
+these libraries is the GTK+ 3 widget set.
+GTK+ comes with many more widgets than Tkinter provides.  An online
+Python GTK+ 3 Tutorial
+is available.
+PyGTK provides bindings for an older version
+of the library, GTK+ 2.  It provides an object oriented interface that
+is slightly higher level than the C one.  There are also bindings to
+GNOME.  An online tutorial is available.
+PyGTK, PyQt, and wxPython, all have a modern look and feel and more
+widgets than Tkinter. In addition, there are many other GUI toolkits for
+Python, both cross-platform, and platform-specific. See the GUI Programming page in the Python Wiki for a
+much more complete list, and also for links to documents where the
+different GUI toolkits are compared.
+25.5. IDLE
+26. Development Tools
+
+    Enter search terms or a module, class or function name.
+    
+

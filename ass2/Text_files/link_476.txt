@@ -1,0 +1,101 @@
+URL: https://docs.python.org/3/library/sysconfig.html
+
+Title: 29.2. sysconfig — Provide access to Python’s configuration information — Python 3.5.2 documentation
+
+Doc Id: 476
+
+Meta Tags : No meta tag found in document
+
+Date :Jul 29, 2016
+
+Content :New in version 3.2.
+Source code: Lib/sysconfig.py
+The sysconfig module provides access to Python’s configuration
+information like the list of installation paths and the configuration variables
+relevant for the current platform.
+A Python distribution contains a Makefile and a pyconfig.h
+header file that are necessary to build both the Python binary itself and
+third-party C extensions compiled using distutils.
+sysconfig puts all variables found in these files in a dictionary that
+can be accessed using get_config_vars() or get_config_var().
+Notice that on Windows, it’s a much smaller set.
+With no arguments, return a dictionary of all configuration variables
+relevant for the current platform.
+With arguments, return a list of values that result from looking up each
+argument in the configuration variable dictionary.
+For each argument, if the value is not found, return None.
+Return the value of a single variable name. Equivalent to
+get_config_vars().get(name).
+If name is not found, return None.
+Example of usage:
+Python uses an installation scheme that differs depending on the platform and on
+the installation options.  These schemes are stored in sysconfig under
+unique identifiers based on the value returned by os.name.
+Every new component that is installed using distutils or a
+Distutils-based system will follow the same scheme to copy its file in the right
+places.
+Python currently supports seven schemes:
+Each scheme is itself composed of a series of paths and each path has a unique
+identifier.  Python currently uses eight paths:
+sysconfig provides some functions to determine these paths.
+Return a tuple containing all schemes currently supported in
+sysconfig.
+Return a tuple containing all path names currently supported in
+sysconfig.
+Return an installation path corresponding to the path name, from the
+install scheme named scheme.
+name has to be a value from the list returned by get_path_names().
+sysconfig stores installation paths corresponding to each path name,
+for each platform, with variables to be expanded.  For instance the stdlib
+path for the nt scheme is: {base}/Lib.
+get_path() will use the variables returned by get_config_vars()
+to expand the path.  All variables have default values for each platform so
+one may call this function and get the default value.
+If scheme is provided, it must be a value from the list returned by
+get_scheme_names().  Otherwise, the default scheme for the current
+platform is used.
+If vars is provided, it must be a dictionary of variables that will update
+the dictionary return by get_config_vars().
+If expand is set to False, the path will not be expanded using the
+variables.
+If name is not found, return None.
+Return a dictionary containing all installation paths corresponding to an
+installation scheme. See get_path() for more information.
+If scheme is not provided, will use the default scheme for the current
+platform.
+If vars is provided, it must be a dictionary of variables that will
+update the dictionary used to expand the paths.
+If expand is set to False, the paths will not be expanded.
+If scheme is not an existing scheme, get_paths() will raise a
+KeyError.
+Return the MAJOR.MINOR Python version number as a string.  Similar to
+sys.version[:3].
+Return a string that identifies the current platform.
+This is used mainly to distinguish platform-specific build directories and
+platform-specific built distributions.  Typically includes the OS name and
+version and the architecture (as supplied by os.uname()), although the
+exact information included depends on the OS; e.g. for IRIX the architecture
+isn’t particularly important (IRIX only runs on SGI hardware), but for Linux
+the kernel version isn’t particularly important.
+Examples of returned values:
+Windows will return one of:
+Mac OS X can return:
+For other non-POSIX platforms, currently just returns sys.platform.
+Return True if the current Python installation was built from source.
+Parse a config.h-style file.
+fp is a file-like object pointing to the config.h-like file.
+A dictionary containing name/value pairs is returned.  If an optional
+dictionary is passed in as the second argument, it is used instead of a new
+dictionary, and updated with the values read in the file.
+Return the path of pyconfig.h.
+Return the path of Makefile.
+You can use sysconfig as a script with Python’s -m option:
+This call will print in the standard output the information returned by
+get_platform(), get_python_version(), get_path() and
+get_config_vars().
+29.1. sys — System-specific parameters and functions
+29.3. builtins — Built-in objects
+
+    Enter search terms or a module, class or function name.
+    
+

@@ -1,0 +1,112 @@
+URL: https://docs.python.org/3/library/zipapp.html
+
+Title: 28.4. zipapp — Manage executable python zip archives — Python 3.5.2 documentation
+
+Doc Id: 223
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :New in version 3.5.
+Source code: Lib/zipapp.py
+This module provides tools to manage the creation of zip files containing
+Python code, which can be  executed directly by the Python interpreter.  The module provides both a
+Command-Line Interface and a Python API.
+The following example shows how the Command-Line Interface
+can be used to create an executable archive from a directory containing
+Python code.  When run, the archive will execute the main function from
+the module myapp in the archive.
+When called as a program from the command line, the following form is used:
+If source is a directory, this will create an archive from the contents of
+source.  If source is a file, it should be an archive, and it will be
+copied to the target archive (or the contents of its shebang line will be
+displayed if the –info option is specified).
+The following options are understood:
+Write the output to a file named output.  If this option is not specified,
+the output filename will be the same as the input source, with the
+extension .pyz added.  If an explicit filename is given, it is used as
+is (so a .pyz extension should be included if required).
+An output filename must be specified if the source is an archive (and in
+that case, output must not be the same as source).
+Add a #! line to the archive specifying interpreter as the command
+to run.  Also, on POSIX, make the archive executable.  The default is to
+write no #! line, and not make the file executable.
+Write a __main__.py file to the archive that executes mainfn.  The
+mainfn argument should have the form “pkg.mod:fn”, where “pkg.mod” is a
+package/module in the archive, and “fn” is a callable in the given module.
+The __main__.py file will execute that callable.
+--main cannot be specified when copying an archive.
+Display the interpreter embedded in the archive, for diagnostic purposes.  In
+this case, any other options are ignored and SOURCE must be an archive, not a
+directory.
+Print a short usage message and exit.
+The module defines two convenience functions:
+Create an application archive from source.  The source can be any
+of the following:
+The target argument determines where the resulting archive will be
+written:
+The interpreter argument specifies the name of the Python
+interpreter with which the archive will be executed.  It is written as
+a “shebang” line at the start of the archive.  On POSIX, this will be
+interpreted by the OS, and on Windows it will be handled by the Python
+launcher.  Omitting the interpreter results in no shebang line being
+written.  If an interpreter is specified, and the target is a
+filename, the executable bit of the target file will be set.
+The main argument specifies the name of a callable which will be
+used as the main program for the archive.  It can only be specified if
+the source is a directory, and the source does not already contain a
+__main__.py file.  The main argument should take the form
+“pkg.module:callable” and the archive will be run by importing
+“pkg.module” and executing the given callable with no arguments.  It
+is an error to omit main if the source is a directory and does not
+contain a __main__.py file, as otherwise the resulting archive
+would not be executable.
+If a file object is specified for source or target, it is the
+caller’s responsibility to close it after calling create_archive.
+When copying an existing archive, file objects supplied only need
+read and readline, or write methods.  When creating an
+archive from a directory, if the target is a file object it will be
+passed to the zipfile.ZipFile class, and must supply the methods
+needed by that class.
+Return the interpreter specified in the #! line at the start of the
+archive.  If there is no #! line, return None.
+The archive argument can be a filename or a file-like object open
+for reading in bytes mode.  It is assumed to be at the start of the archive.
+Pack up a directory into an archive, and run it.
+The same can be done using the create_archive() functon:
+To make the application directly executable on POSIX, specify an interpreter
+to use.
+To replace the shebang line on an existing archive, create a modified archive
+using the create_archive() function:
+To update the file in place, do the replacement in memory using a BytesIO
+object, and then overwrite the source afterwards.  Note that there is a risk
+when overwriting a file in place that an error will result in the loss of
+the original file.  This code does not protect against such errors, but
+production code should do so.  Also, this method will only work if the archive
+fits in memory:
+Note that if you specify an interpreter and then distribute your application
+archive, you need to ensure that the interpreter used is portable.  The Python
+launcher for Windows supports most common forms of POSIX #! line, but there
+are other issues to consider:
+Python has been able to execute zip files which contain a __main__.py file
+since version 2.6.  In order to be executed by Python, an application archive
+simply has to be a standard zip file containing a __main__.py file which
+will be run as the entry point for the application.  As usual for any Python
+script, the parent of the script (in this case the zip file) will be placed on
+sys.path and thus further modules can be imported from the zip file.
+The zip file format allows arbitrary data to be prepended to a zip file.  The
+zip application format uses this ability to prepend a standard POSIX “shebang”
+line to the file (#!/path/to/interpreter).
+Formally, the Python zip application format is therefore:
+If an application archive has a shebang line, it may have the executable bit set
+on POSIX systems, to allow it to be executed directly.
+There is no requirement that the tools in this module are used to create
+application archives - the module is a convenience, but archives in the above
+format created by any means are acceptable to Python.
+28.3. venv — Creation of virtual environments
+29. Python Runtime Services
+
+    Enter search terms or a module, class or function name.
+    
+

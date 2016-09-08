@@ -1,0 +1,42 @@
+URL: https://docs.python.org/3/library/fnmatch.html
+
+Title: 11.8. fnmatch — Unix filename pattern matching — Python 3.5.2 documentation
+
+Doc Id: 390
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :Source code: Lib/fnmatch.py
+This module provides support for Unix shell-style wildcards, which are not the
+same as regular expressions (which are documented in the re module).  The
+special characters used in shell-style wildcards are:
+For a literal match, wrap the meta-characters in brackets.
+For example, '[?]' matches the character '?'.
+Note that the filename separator ('/' on Unix) is not special to this
+module.  See module glob for pathname expansion (glob uses
+fnmatch() to match pathname segments).  Similarly, filenames starting with
+a period are not special for this module, and are matched by the * and ?
+patterns.
+Test whether the filename string matches the pattern string, returning
+True or False.  If the operating system is case-insensitive,
+then both parameters will be normalized to all lower- or upper-case before
+the comparison is performed.  fnmatchcase() can be used to perform a
+case-sensitive comparison, regardless of whether that’s standard for the
+operating system.
+This example will print all file names in the current directory with the
+extension .txt:
+Test whether filename matches pattern, returning True or
+False; the comparison is case-sensitive.
+Return the subset of the list of names that match pattern. It is the same as
+[n for n in names if fnmatch(n, pattern)], but implemented more efficiently.
+Return the shell-style pattern converted to a regular expression.
+Example:
+See also
+11.7. glob — Unix style pathname pattern expansion
+11.9. linecache — Random access to text lines
+
+    Enter search terms or a module, class or function name.
+    
+

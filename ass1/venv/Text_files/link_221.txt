@@ -1,0 +1,80 @@
+URL: https://docs.python.org/3/library/ensurepip.html
+
+Title: 28.2. ensurepip — Bootstrapping the pip installer — Python 3.5.2 documentation
+
+Doc Id: 221
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :New in version 3.4.
+The ensurepip package provides support for bootstrapping the pip
+installer into an existing Python installation or virtual environment. This
+bootstrapping approach reflects the fact that pip is an independent
+project with its own release cycle, and the latest available stable version
+is bundled with maintenance and feature releases of the CPython reference
+interpreter.
+In most cases, end users of Python shouldn’t need to invoke this module
+directly (as pip should be bootstrapped by default), but it may be
+needed if installing pip was skipped when installing Python (or
+when creating a virtual environment) or after explicitly uninstalling
+pip.
+Note
+This module does not access the internet. All of the components
+needed to bootstrap pip are included as internal parts of the
+package.
+See also
+The command line interface is invoked using the interpreter’s -m switch.
+The simplest possible invocation is:
+This invocation will install pip if it is not already installed,
+but otherwise does nothing. To ensure the installed version of pip
+is at least as recent as the one bundled with ensurepip, pass the
+--upgrade option:
+By default, pip is installed into the current virtual environment
+(if one is active) or into the system site packages (if there is no
+active virtual environment). The installation location can be controlled
+through two additional command line options:
+By default, the scripts pipX and pipX.Y will be installed (where
+X.Y stands for the version of Python used to invoke ensurepip). The
+scripts installed can be controlled through two additional command line
+options:
+--altinstall: if an alternate installation is requested, the pipX
+script will not be installed.
+pip script will be installed in addition to the two regular scripts.
+Providing both of the script selection options will trigger an exception.
+ensurepip exposes two functions for programmatic use:
+Returns a string specifying the bundled version of pip that will be
+installed when bootstrapping an environment.
+Bootstraps pip into the current or designated environment.
+root specifies an alternative root directory to install relative to.
+If root is None, then installation uses the default install location
+for the current environment.
+upgrade indicates whether or not to upgrade an existing installation
+of an earlier version of pip to the bundled version.
+user indicates whether to use the user scheme rather than installing
+globally.
+By default, the scripts pipX and pipX.Y will be installed (where
+X.Y stands for the current version of Python).
+If altinstall is set, then pipX will not be installed.
+If default_pip is set, then pip will be installed in addition to
+the two regular scripts.
+Setting both altinstall and default_pip will trigger
+ValueError.
+verbosity controls the level of output to sys.stdout from the
+bootstrapping operation.
+Note
+The bootstrapping process has side effects on both sys.path and
+os.environ. Invoking the command line interface in a subprocess
+instead allows these side effects to be avoided.
+Note
+The bootstrapping process may install additional modules required by
+pip, but other software should not assume those dependencies will
+always be present by default (as the dependencies may be removed in a
+future version of pip).
+28.1. distutils — Building and installing Python modules
+28.3. venv — Creation of virtual environments
+
+    Enter search terms or a module, class or function name.
+    
+

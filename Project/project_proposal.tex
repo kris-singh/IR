@@ -1,0 +1,112 @@
+\documentclass[11pt,letterpaper]{article}
+\oddsidemargin 0in
+\evensidemargin 0in
+\textwidth 6.5in
+\topmargin -0.5in
+\textheight 9.0in
+\usepackage{hyperref}
+\usepackage{mathptmx}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage[usenames,dvipsnames]{xcolor}
+\newcommand{\blue}[1]{\textcolor{RoyalBlue}{#1}}
+\newcommand{\fillme}[1]{\blue{\texttt{[Insert #1]}}}
+\newcommand{\instructions}[1]{\blue{\textit{#1}}}
+% uncomment the next two lines if you want the instructions to disappear.
+\renewcommand{\instructions}[1]{}
+\renewcommand{\fillme}[1]{}
+
+\begin{document}
+
+\title{Contextual Bandit for Recommendation System}
+\author{KrishnaKant Singh,Abhishek Jain,Varun Mishra}
+\maketitle
+
+
+
+\instructions{If you are taking CS446 for 4 hours credit, you need to
+  do a research project.\\
+This is a \LaTeX template for the initial proposal,  but should also give you a start on the final report.\\
+The blue pieces of text  in this template are either instructions ({\tt$\backslash$instructions\{...\}}) or indicate where you need to fill in something ({\tt$\backslash$fillme\{...\}}).  
+You should replace all the {\tt$\backslash$fillme\{...\}} commands with your own text.
+To make the instructions disappear, please uncomment the 
+\begin{center}
+{\tt$\backslash$renewcommand\{$\backslash$instructions\}[1]\{\}}\\
+%{\tt$\backslash$renewcommand\{$\backslash$fillme\}[1]\{\}}\\
+\end{center}
+lines in the preamble (just above  {\tt $\backslash$begin\{document\}} of this .tex file) by removing the leading \% marks, 
+recompile (run \LaTeX again) and submit the PDF on Compass.\\
+The template for the final report is at
+\url{http://courses.engr.illinois.edu/cs446/Projects/CS446proj.tex}
+(or
+\url{http://courses.engr.illinois.edu/cs446/Projects/CS446proj.pdf}
+for the pdf)
+}
+\section*{Task description}
+\instructions{Describe the task you want to tackle in your project.}
+Personalisation is important for making recommendation to the user.Many web servies try to personalise their search results according to the intrest of the users one of the most popular technique for this is  Collabrative Filtering. But CF approaches face many problems like  dynamic changes like addition or deletion of the items , cold start problem and time varying popularity of items.\\
+One of the most popular solution to this the Multi Armed Bandit problem(Described Later).This solution suffers greatly because it dose not uses the context information at all.A variation of the multi armed bandit called the contextual multi armed bandit is much better alternative.\\
+Using techniques form Contextual Bandit try to build a online learning system that can rank the items on the fly given diffrent contexts (diffrent users).
+\cite{Conte89:online}
+\cite{Learn49:online}
+\section*{Background}
+\instructions{Has there been any prior work on this task? If so,
+  provide references where available}
+\textbf{Multi Armed Bandit}
+The problem more generally is called the k-armed bandit problem defined as follows on each round \\
+1.A policy choses arm a from 1 of k arms 
+2.The world reveals the reward $r_a$ of the choosen arm
+As information is accumulated over multiple rounds,a good policy might converge on a good choice of arm.
+More formally ,
+\begin{equation*}
+Arms\in{1,2,.....k}
+\end{equation*}
+\begin{equation*}
+Actions \in {a_1,a_2,......a_k}
+\end{equation*}
+\begin{equation*}
+Rewards \in {r_{a1},r_{a2},.....,r_{ak}}
+\end{equation*}
+The rewards can be defined as Expectation of distribution on $r_{a1}$ 
+Objective function is 
+\begin{equation*}
+Max \sum_{t=0}^{T} r_t 
+\end{equation*}
+If we have some intial distribution of rewards over the arms then a greedy strategy can be to  always select the arm with highest reward to get the maximum reward but we can be stuck in a local optimum.We need a policy that can explore and exploit in some way to get the maximum reward.There are several strategies for this the $\epsilon$ greddy strategy and Upper confidence Bound strategy.These strategies are shown to converge to a global optimum. A major problem with this is we do not care for context for eg in the medical treatment recommendation problem,the medical treatment with highest recommendation is prescribed for everybody without taking into account the symptos of the patients.\\
+\textbf{Contextual Bandit} A contextual MAB can be defined as following
+\cite{AnInt60:online}
+\cite{Perso60:online}
+	The world produces some context
+	\begin{equation*}
+	x_t \in X
+	\end{equation*}
+	The learner chooses an action
+	\begin{equation*}
+	a_t \in {1........K}
+	\end{equation*}
+	The world reacts with reward
+	\begin{equation*}
+	r_t(a_t) \in [0,1]
+	\end{equation*}
+A policy can be defined as follow 
+\begin{equation*}
+\prod = \{\pi : X -> {1...,K}\}
+\end{equation*}
+The objective function is defined as 
+\begin{equation*}
+Regret = max_{\pi \in \prod }\sum_{t=1}^{T} r_t(\pi(x_t)) - \sum_{t=1}^{T} r_t(a_t)
+\end{equation*}
+This can be interpreted as chossing actions at each step to minimize regret which is defined as diffrence in the reward between selected action and optimal action at step t.
+Contextual bandits systems have gained a lot of intrest of late in the Information Retrival Community of late.
+For solving the contextual bandit problem Linear Upper Bound Confidence Interval and Linear Upper Bound Confidence Internal with Hybrid linear models are popular approaches.Thompson sampling is also another popular alternative.\cite{Multi59:online}
+\cite{agraw23:online}
+\cite{Adver67:online}
+\section*{Data and evaluation}
+\instructions{Do you have data to train and test your system on? How
+  will you evaluate your system?}
+At present the most popular data sources for the evaluation Contextual Bandits are \textbf{Yahoo!Today Module} and \textbf{KDD 2012 advertising challenge}
+Evaluation methodology for Bandit problems are much harder than classification problems in machine learning.Still 2 popular techniques for evaluation are Replayer method \cite{Li2010} and the simulator method \cite{Li2011}\cite{Zeng2016}.
+We intent on using the replayer method as it is an offline evaluation method and can be shown to perform better than the simulator method as bias is introduced inherently in a simulator.
+\bibliographystyle{plain}
+\bibliography{/home/kris/Downloads/lib.bib} 
+\end{document}

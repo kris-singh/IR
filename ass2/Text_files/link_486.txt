@@ -1,0 +1,38 @@
+URL: https://docs.python.org/3/library/tabnanny.html
+
+Title: 32.8. tabnanny — Detection of ambiguous indentation — Python 3.5.2 documentation
+
+Doc Id: 486
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :Source code: Lib/tabnanny.py
+For the time being this module is intended to be called as a script. However it
+is possible to import it into an IDE and use the function check()
+described below.
+Note
+The API provided by this module is likely to change in future releases; such
+changes may not be backward compatible.
+If file_or_dir is a directory and not a symbolic link, then recursively
+descend the directory tree named by file_or_dir, checking all .py
+files along the way.  If file_or_dir is an ordinary Python source file, it
+is checked for whitespace related problems.  The diagnostic messages are
+written to standard output using the print() function.
+Flag indicating whether to print verbose messages. This is incremented by the
+-v option if called as a script.
+Flag indicating whether to print only the filenames of files containing
+whitespace related problems.  This is set to true by the -q option if called
+as a script.
+Raised by tokeneater() if detecting an ambiguous indent. Captured and
+handled in check().
+This function is used by check() as a callback parameter to the function
+tokenize.tokenize().
+See also
+32.7. tokenize — Tokenizer for Python source
+32.9. pyclbr — Python class browser support
+
+    Enter search terms or a module, class or function name.
+    
+

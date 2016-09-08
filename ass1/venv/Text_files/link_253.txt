@@ -1,0 +1,376 @@
+URL: https://docs.python.org/3/library/dis.html
+
+Title: 32.12. dis — Disassembler for Python bytecode — Python 3.5.2 documentation
+
+Doc Id: 253
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :Source code: Lib/dis.py
+The dis module supports the analysis of CPython bytecode by
+disassembling it. The CPython bytecode which this module takes as an input is
+defined in the file Include/opcode.h and used by the compiler and the
+interpreter.
+CPython implementation detail: Bytecode is an implementation detail of the CPython interpreter.  No
+guarantees are made that bytecode will not be added, removed, or changed
+between versions of Python.  Use of this module should not be considered to
+work across Python VMs or Python releases.
+Example: Given the function myfunc():
+the following command can be used to display the disassembly of
+myfunc():
+(The “2” is a line number).
+New in version 3.4.
+The bytecode analysis API allows pieces of Python code to be wrapped in a
+Bytecode object that provides easy access to details of the compiled
+code.
+Analyse the bytecode corresponding to a function, generator, method, string
+of source code, or a code object (as returned by compile()).
+This is a convenience wrapper around many of the functions listed below, most
+notably get_instructions(), as iterating over a Bytecode
+instance yields the bytecode operations as Instruction instances.
+If first_line is not None, it indicates the line number that should be
+reported for the first source line in the disassembled code.  Otherwise, the
+source line information (if any) is taken directly from the disassembled code
+object.
+If current_offset is not None, it refers to an instruction offset in the
+disassembled code. Setting this means dis() will display a “current
+instruction” marker against the specified opcode.
+Construct a Bytecode instance from the given traceback, setting
+current_offset to the instruction responsible for the exception.
+The compiled code object.
+The first source line of the code object (if available)
+Return a formatted view of the bytecode operations (the same as printed by
+dis.dis(), but returned as a multi-line string).
+Return a formatted multi-line string with detailed information about the
+code object, like code_info().
+Example:
+The dis module also defines the following analysis functions that convert
+the input directly to the desired output. They can be useful if only a single
+operation is being performed, so the intermediate analysis object isn’t useful:
+Return a formatted multi-line string with detailed code object information
+for the supplied function, generator, method, source code string or code object.
+Note that the exact contents of code info strings are highly implementation
+dependent and they may change arbitrarily across Python VMs or Python
+releases.
+New in version 3.2.
+Print detailed code object information for the supplied function, method,
+source code string or code object to file (or sys.stdout if file
+is not specified).
+This is a convenient shorthand for print(code_info(x), file=file),
+intended for interactive exploration at the interpreter prompt.
+New in version 3.2.
+Changed in version 3.4: Added file parameter.
+Disassemble the x object.  x can denote either a module, a class, a
+method, a function, a generator, a code object, a string of source code or
+a byte sequence of raw bytecode.  For a module, it disassembles all functions.
+For a class, it disassembles all methods (including class and static methods).
+For a code object or sequence of raw bytecode, it prints one line per bytecode
+instruction.  Strings are first compiled to code objects with the compile()
+built-in function before being disassembled.  If no object is provided, this
+function disassembles the last traceback.
+The disassembly is written as text to the supplied file argument if
+provided and to sys.stdout otherwise.
+Changed in version 3.4: Added file parameter.
+Disassemble the top-of-stack function of a traceback, using the last
+traceback if none was passed.  The instruction causing the exception is
+indicated.
+The disassembly is written as text to the supplied file argument if
+provided and to sys.stdout otherwise.
+Changed in version 3.4: Added file parameter.
+Disassemble a code object, indicating the last instruction if lasti was
+provided.  The output is divided in the following columns:
+The parameter interpretation recognizes local and global variable names,
+constant values, branch targets, and compare operators.
+The disassembly is written as text to the supplied file argument if
+provided and to sys.stdout otherwise.
+Changed in version 3.4: Added file parameter.
+Return an iterator over the instructions in the supplied function, method,
+source code string or code object.
+The iterator generates a series of Instruction named tuples giving
+the details of each operation in the supplied code.
+If first_line is not None, it indicates the line number that should be
+reported for the first source line in the disassembled code.  Otherwise, the
+source line information (if any) is taken directly from the disassembled code
+object.
+New in version 3.4.
+This generator function uses the co_firstlineno and co_lnotab
+attributes of the code object code to find the offsets which are starts of
+lines in the source code.  They are generated as (offset, lineno) pairs.
+Detect all offsets in the code object code which are jump targets, and
+return a list of these offsets.
+Compute the stack effect of opcode with argument oparg.
+New in version 3.4.
+The get_instructions() function and Bytecode class provide
+details of bytecode instructions as Instruction instances:
+Details for a bytecode operation
+numeric code for operation, corresponding to the opcode values listed
+below and the bytecode values in the Opcode collections.
+human readable name for operation
+numeric argument to operation (if any), otherwise None
+resolved arg value (if known), otherwise same as arg
+human readable description of operation argument
+start index of operation within bytecode sequence
+line started by this opcode (if any), otherwise None
+True if other code jumps to here, otherwise False
+New in version 3.4.
+The Python compiler currently generates the following bytecode instructions.
+General instructions
+Do nothing code.  Used as a placeholder by the bytecode optimizer.
+Removes the top-of-stack (TOS) item.
+Swaps the two top-most stack items.
+Lifts second and third stack item one position up, moves top down to position
+three.
+Duplicates the reference on top of the stack.
+Duplicates the two references on top of the stack, leaving them in the
+same order.
+Unary operations
+Unary operations take the top of the stack, apply the operation, and push the
+result back on the stack.
+Implements TOS = +TOS.
+Implements TOS = -TOS.
+Implements TOS = not TOS.
+Implements TOS = ~TOS.
+Implements TOS = iter(TOS).
+If TOS is a generator iterator or coroutine object
+it is left as is.  Otherwise, implements TOS = iter(TOS).
+New in version 3.5.
+Binary operations
+Binary operations remove the top of the stack (TOS) and the second top-most
+stack item (TOS1) from the stack.  They perform the operation, and put the
+result back on the stack.
+Implements TOS = TOS1 ** TOS.
+Implements TOS = TOS1 * TOS.
+Implements TOS = TOS1 @ TOS.
+New in version 3.5.
+Implements TOS = TOS1 // TOS.
+Implements TOS = TOS1 / TOS.
+Implements TOS = TOS1 % TOS.
+Implements TOS = TOS1 + TOS.
+Implements TOS = TOS1 - TOS.
+Implements TOS = TOS1[TOS].
+Implements TOS = TOS1 << TOS.
+Implements TOS = TOS1 >> TOS.
+Implements TOS = TOS1 & TOS.
+Implements TOS = TOS1 ^ TOS.
+Implements TOS = TOS1 | TOS.
+In-place operations
+In-place operations are like binary operations, in that they remove TOS and
+TOS1, and push the result back on the stack, but the operation is done in-place
+when TOS1 supports it, and the resulting TOS may be (but does not have to be)
+the original TOS1.
+Implements in-place TOS = TOS1 ** TOS.
+Implements in-place TOS = TOS1 * TOS.
+Implements in-place TOS = TOS1 @ TOS.
+New in version 3.5.
+Implements in-place TOS = TOS1 // TOS.
+Implements in-place TOS = TOS1 / TOS.
+Implements in-place TOS = TOS1 % TOS.
+Implements in-place TOS = TOS1 + TOS.
+Implements in-place TOS = TOS1 - TOS.
+Implements in-place TOS = TOS1 << TOS.
+Implements in-place TOS = TOS1 >> TOS.
+Implements in-place TOS = TOS1 & TOS.
+Implements in-place TOS = TOS1 ^ TOS.
+Implements in-place TOS = TOS1 | TOS.
+Implements TOS1[TOS] = TOS2.
+Implements del TOS1[TOS].
+Coroutine opcodes
+Implements TOS = get_awaitable(TOS), where get_awaitable(o)
+returns o if o is a coroutine object or a generator object with
+the CO_ITERABLE_COROUTINE flag, or resolves
+o.__await__.
+Implements TOS = get_awaitable(TOS.__aiter__()).  See GET_AWAITABLE
+for details about get_awaitable
+Implements PUSH(get_awaitable(TOS.__anext__())).  See GET_AWAITABLE
+for details about get_awaitable
+Resolves __aenter__ and __aexit__ from the object on top of the
+stack.  Pushes __aexit__ and result of __aenter__() to the stack.
+Creates a new frame object.
+Miscellaneous opcodes
+Implements the expression statement for the interactive mode.  TOS is removed
+from the stack and printed.  In non-interactive mode, an expression statement
+is terminated with POP_TOP.
+Terminates a loop due to a break statement.
+Continues a loop due to a continue statement.  target is the
+address to jump to (which should be a FOR_ITER instruction).
+Calls set.add(TOS1[-i], TOS).  Used to implement set comprehensions.
+Calls list.append(TOS[-i], TOS).  Used to implement list comprehensions.
+Calls dict.setitem(TOS1[-i], TOS, TOS1).  Used to implement dict
+comprehensions.
+For all of the SET_ADD, LIST_APPEND and MAP_ADD
+instructions, while the added value or key/value pair is popped off, the
+container object remains on the stack so that it is available for further
+iterations of the loop.
+Returns with TOS to the caller of the function.
+Pops TOS and yields it from a generator.
+Pops TOS and delegates to it as a subiterator from a generator.
+New in version 3.3.
+Loads all symbols not starting with '_' directly from the module TOS to
+the local namespace. The module is popped after loading all names. This
+opcode implements from module import *.
+Removes one block from the block stack.  Per frame, there is a stack of
+blocks, denoting nested loops, try statements, and such.
+Removes one block from the block stack. The popped block must be an exception
+handler block, as implicitly created when entering an except handler.  In
+addition to popping extraneous values from the frame stack, the last three
+popped values are used to restore the exception state.
+Terminates a finally clause.  The interpreter recalls whether the
+exception has to be re-raised, or whether the function returns, and continues
+with the outer-next block.
+Pushes builtins.__build_class__() onto the stack.  It is later called
+by CALL_FUNCTION to construct a class.
+This opcode performs several operations before a with block starts.  First,
+it loads __exit__() from the context manager and pushes it onto
+the stack for later use by WITH_CLEANUP.  Then,
+__enter__() is called, and a finally block pointing to delta
+is pushed.  Finally, the result of calling the enter method is pushed onto
+the stack.  The next opcode will either ignore it (POP_TOP), or
+store it in (a) variable(s) (STORE_FAST, STORE_NAME, or
+UNPACK_SEQUENCE).
+Cleans up the stack when a with statement block exits.  TOS is the
+context manager’s __exit__() bound method. Below TOS are 1–3 values
+indicating how/why the finally clause was entered:
+In the last case, TOS(SECOND, THIRD, FOURTH) is called, otherwise
+TOS(None, None, None).  Pushes SECOND and result of the call
+to the stack.
+Pops exception type and result of ‘exit’ function call from the stack.
+If the stack represents an exception, and the function call returns a
+‘true’ value, this information is “zapped” and replaced with a single
+WHY_SILENCED to prevent END_FINALLY from re-raising the
+exception.  (But non-local gotos will still be resumed.)
+All of the following opcodes expect arguments.  An argument is two bytes, with
+the more significant byte last.
+Implements name = TOS. namei is the index of name in the attribute
+co_names of the code object. The compiler tries to use
+STORE_FAST or STORE_GLOBAL if possible.
+Implements del name, where namei is the index into co_names
+attribute of the code object.
+Unpacks TOS into count individual values, which are put onto the stack
+right-to-left.
+Implements assignment with a starred target: Unpacks an iterable in TOS into
+individual values, where the total number of values can be smaller than the
+number of items in the iterable: one of the new values will be a list of all
+leftover items.
+The low byte of counts is the number of values before the list value, the
+high byte of counts the number of values after it.  The resulting values
+are put onto the stack right-to-left.
+Implements TOS.name = TOS1, where namei is the index of name in
+co_names.
+Implements del TOS.name, using namei as index into co_names.
+Works as STORE_NAME, but stores the name as a global.
+Works as DELETE_NAME, but deletes a global name.
+Pushes co_consts[consti] onto the stack.
+Pushes the value associated with co_names[namei] onto the stack.
+Creates a tuple consuming count items from the stack, and pushes the
+resulting tuple onto the stack.
+Works as BUILD_TUPLE, but creates a list.
+Works as BUILD_TUPLE, but creates a set.
+Pushes a new dictionary object onto the stack.  The dictionary is pre-sized
+to hold count entries.
+Replaces TOS with getattr(TOS, co_names[namei]).
+Performs a Boolean operation.  The operation name can be found in
+cmp_op[opname].
+Imports the module co_names[namei].  TOS and TOS1 are popped and provide
+the fromlist and level arguments of __import__().  The module
+object is pushed onto the stack.  The current namespace is not affected: for
+a proper import statement, a subsequent STORE_FAST instruction
+modifies the namespace.
+Loads the attribute co_names[namei] from the module found in TOS. The
+resulting object is pushed onto the stack, to be subsequently stored by a
+STORE_FAST instruction.
+Increments bytecode counter by delta.
+If TOS is true, sets the bytecode counter to target.  TOS is popped.
+If TOS is false, sets the bytecode counter to target.  TOS is popped.
+If TOS is true, sets the bytecode counter to target and leaves TOS on the
+stack.  Otherwise (TOS is false), TOS is popped.
+If TOS is false, sets the bytecode counter to target and leaves TOS on the
+stack.  Otherwise (TOS is true), TOS is popped.
+Set bytecode counter to target.
+TOS is an iterator.  Call its __next__() method.  If
+this yields a new value, push it on the stack (leaving the iterator below
+it).  If the iterator indicates it is exhausted TOS is popped, and the byte
+code counter is incremented by delta.
+Loads the global named co_names[namei] onto the stack.
+Pushes a block for a loop onto the block stack.  The block spans from the
+current instruction with a size of delta bytes.
+Pushes a try block from a try-except clause onto the block stack. delta
+points to the first except block.
+Pushes a try block from a try-except clause onto the block stack. delta
+points to the finally block.
+Pushes a reference to the local co_varnames[var_num] onto the stack.
+Stores TOS into the local co_varnames[var_num].
+Deletes local co_varnames[var_num].
+Pushes a reference to the cell contained in slot i of the cell and free
+variable storage.  The name of the variable is co_cellvars[i] if i is
+less than the length of co_cellvars.  Otherwise it is co_freevars[i -
+len(co_cellvars)].
+Loads the cell contained in slot i of the cell and free variable storage.
+Pushes a reference to the object the cell contains on the stack.
+Much like LOAD_DEREF but first checks the locals dictionary before
+consulting the cell.  This is used for loading free variables in class
+bodies.
+Stores TOS into the cell contained in slot i of the cell and free variable
+storage.
+Empties the cell contained in slot i of the cell and free variable storage.
+Used by the del statement.
+Raises an exception. argc indicates the number of parameters to the raise
+statement, ranging from 0 to 3.  The handler will find the traceback as TOS2,
+the parameter as TOS1, and the exception as TOS.
+Calls a function.  The low byte of argc indicates the number of positional
+parameters, the high byte the number of keyword parameters. On the stack, the
+opcode finds the keyword parameters first.  For each keyword argument, the
+value is on top of the key.  Below the keyword parameters, the positional
+parameters are on the stack, with the right-most parameter on top.  Below the
+parameters, the function object to call is on the stack.  Pops all function
+arguments, and the function itself off the stack, and pushes the return
+value.
+Pushes a new function object on the stack.  From bottom to top, the consumed
+stack must consist of
+Creates a new function object, sets its __closure__ slot, and pushes it on
+the stack.  TOS is the qualified name of the function, TOS1 is the
+code associated with the function, and TOS2 is the tuple containing cells for
+the closure’s free variables.  argc is interpreted as in MAKE_FUNCTION;
+the annotations and defaults are also in the same order below TOS2.
+Pushes a slice object on the stack.  argc must be 2 or 3.  If it is 2,
+slice(TOS1, TOS) is pushed; if it is 3, slice(TOS2, TOS1, TOS) is
+pushed. See the slice() built-in function for more information.
+Prefixes any opcode which has an argument too big to fit into the default two
+bytes.  ext holds two additional bytes which, taken together with the
+subsequent opcode’s argument, comprise a four-byte argument, ext being the
+two most-significant bytes.
+Calls a function. argc is interpreted as in CALL_FUNCTION. The
+top element on the stack contains the variable argument list, followed by
+keyword and positional arguments.
+Calls a function. argc is interpreted as in CALL_FUNCTION. The
+top element on the stack contains the keyword arguments dictionary, followed
+by explicit keyword and positional arguments.
+Calls a function. argc is interpreted as in CALL_FUNCTION.  The
+top element on the stack contains the keyword arguments dictionary, followed
+by the variable-arguments tuple, followed by explicit keyword and positional
+arguments.
+This is not really an opcode.  It identifies the dividing line between
+opcodes which don’t take arguments < HAVE_ARGUMENT and those which do
+>= HAVE_ARGUMENT.
+These collections are provided for automatic introspection of bytecode
+instructions:
+Sequence of operation names, indexable using the bytecode.
+Dictionary mapping operation names to bytecodes.
+Sequence of all compare operation names.
+Sequence of bytecodes that have a constant parameter.
+Sequence of bytecodes that access a free variable (note that ‘free’ in this
+context refers to names in the current scope that are referenced by inner
+scopes or names in outer scopes that are referenced from this scope.  It does
+not include references to global or builtin scopes).
+Sequence of bytecodes that access an attribute by name.
+Sequence of bytecodes that have a relative jump target.
+Sequence of bytecodes that have an absolute jump target.
+Sequence of bytecodes that access a local variable.
+Sequence of bytecodes of Boolean operations.
+32.11. compileall — Byte-compile Python libraries
+32.13. pickletools — Tools for pickle developers
+
+    Enter search terms or a module, class or function name.
+    
+

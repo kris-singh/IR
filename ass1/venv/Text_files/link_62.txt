@@ -1,0 +1,89 @@
+URL: https://docs.python.org/3/library/collections.abc.html
+
+Title: 8.4. collections.abc — Abstract Base Classes for Containers — Python 3.5.2 documentation
+
+Doc Id: 62
+
+Meta Tags : No meta tag found in document
+
+Date :Jul 15, 2016
+
+Content :New in version 3.3: Formerly, this module was part of the collections module.
+Source code: Lib/_collections_abc.py
+This module provides abstract base classes that
+can be used to test whether a class provides a particular interface; for
+example, whether it is hashable or whether it is a mapping.
+The collections module offers the following ABCs:
+ABCs for classes that provide respectively the methods __contains__(),
+__hash__(), __len__(), and __call__().
+ABC for classes that provide the __iter__() method.
+See also the definition of iterable.
+ABC for classes that provide the __iter__() and
+__next__() methods.  See also the definition of
+iterator.
+ABC for generator classes that implement the protocol defined in
+PEP 342 that extends iterators with the send(),
+throw() and close() methods.
+See also the definition of generator.
+New in version 3.5.
+ABCs for read-only and mutable sequences.
+Implementation note: Some of the mixin methods, such as
+__iter__(), __reversed__() and index(), make
+repeated calls to the underlying __getitem__() method.
+Consequently, if __getitem__() is implemented with constant
+access speed, the mixin methods will have linear performance;
+however, if the underlying method is linear (as it would be with a
+linked list), the mixins will have quadratic performance and will
+likely need to be overridden.
+Changed in version 3.5: The index() method added support for stop and start
+arguments.
+ABCs for read-only and mutable sets.
+ABCs for read-only and mutable mappings.
+ABCs for mapping, items, keys, and values views.
+ABC for awaitable objects, which can be used in await
+expressions.  Custom implementations must provide the __await__()
+method.
+Coroutine objects and instances of the
+Coroutine ABC are all instances of this ABC.
+Note
+In CPython, generator-based coroutines (generators decorated with
+types.coroutine() or asyncio.coroutine()) are
+awaitables, even though they do not have an __await__() method.
+Using isinstance(gencoro, Awaitable) for them will return False.
+Use inspect.isawaitable() to detect them.
+New in version 3.5.
+ABC for coroutine compatible classes.  These implement the
+following methods, defined in Coroutine Objects:
+send(), throw(), and
+close().  Custom implementations must also implement
+__await__().  All Coroutine instances are also instances of
+Awaitable.  See also the definition of coroutine.
+Note
+In CPython, generator-based coroutines (generators decorated with
+types.coroutine() or asyncio.coroutine()) are
+awaitables, even though they do not have an __await__() method.
+Using isinstance(gencoro, Coroutine) for them will return False.
+Use inspect.isawaitable() to detect them.
+New in version 3.5.
+ABC for classes that provide __aiter__ method.  See also the
+definition of asynchronous iterable.
+New in version 3.5.
+ABC for classes that provide __aiter__ and __anext__
+methods.  See also the definition of asynchronous iterator.
+New in version 3.5.
+These ABCs allow us to ask classes or instances if they provide
+particular functionality, for example:
+Several of the ABCs are also useful as mixins that make it easier to develop
+classes supporting container APIs.  For example, to write a class supporting
+the full Set API, it is only necessary to supply the three underlying
+abstract methods: __contains__(), __iter__(), and __len__().
+The ABC supplies the remaining methods such as __and__() and
+isdisjoint():
+Notes on using Set and MutableSet as a mixin:
+See also
+8.3. collections — Container datatypes
+8.5. heapq — Heap queue algorithm
+
+    Enter search terms or a module, class or function name.
+    
+

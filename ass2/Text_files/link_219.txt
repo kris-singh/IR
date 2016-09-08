@@ -1,0 +1,211 @@
+URL: https://docs.python.org/3/library/tracemalloc.html
+
+Title: 27.7. tracemalloc — Trace memory allocations — Python 3.5.2 documentation
+
+Doc Id: 219
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :New in version 3.4.
+Source code: Lib/tracemalloc.py
+The tracemalloc module is a debug tool to trace memory blocks allocated by
+Python. It provides the following information:
+To trace most memory blocks allocated by Python, the module should be started
+as early as possible by setting the PYTHONTRACEMALLOC environment
+variable to 1, or by using -X tracemalloc command line
+option. The tracemalloc.start() function can be called at runtime to
+start tracing Python memory allocations.
+By default, a trace of an allocated memory block only stores the most recent
+frame (1 frame). To store 25 frames at startup: set the
+PYTHONTRACEMALLOC environment variable to 25, or use the
+-X tracemalloc=25 command line option.
+Display the 10 files allocating the most memory:
+Example of output of the Python test suite:
+We can see that Python loaded 4.8 MiB data (bytecode and constants) from
+modules and that the collections module allocated 244 KiB to build
+namedtuple types.
+See Snapshot.statistics() for more options.
+Take two snapshots and display the differences:
+Example of output before/after running some tests of the Python test suite:
+We can see that Python has loaded 8.2 MiB of module data (bytecode and
+constants), and that this is 4.4 MiB more than had been loaded before the
+tests, when the previous snapshot was taken. Similarly, the linecache
+module has cached 940 KiB of Python source code to format tracebacks, all
+of it since the previous snapshot.
+If the system has little free memory, snapshots can be written on disk using
+the Snapshot.dump() method to analyze the snapshot offline. Then use the
+Snapshot.load() method reload the snapshot.
+Code to display the traceback of the biggest memory block:
+Example of output of the Python test suite (traceback limited to 25 frames):
+We can see that the most memory was allocated in the importlib module to
+load data (bytecode and constants) from modules: 870 KiB. The traceback is
+where the importlib loaded data most recently: on the import pdb
+line of the doctest module. The traceback may change if a new module is
+loaded.
+Code to display the 10 lines allocating the most memory with a pretty output,
+ignoring <frozen importlib._bootstrap> and <unknown> files:
+Example of output of the Python test suite:
+See Snapshot.statistics() for more options.
+Clear traces of memory blocks allocated by Python.
+See also stop().
+Get the traceback where the Python object obj was allocated.
+Return a Traceback instance, or None if the tracemalloc
+module is not tracing memory allocations or did not trace the allocation of
+the object.
+See also gc.get_referrers() and sys.getsizeof() functions.
+Get the maximum number of frames stored in the traceback of a trace.
+The tracemalloc module must be tracing memory allocations to
+get the limit, otherwise an exception is raised.
+The limit is set by the start() function.
+Get the current size and peak size of memory blocks traced by the
+tracemalloc module as a tuple: (current: int, peak: int).
+Get the memory usage in bytes of the tracemalloc module used to store
+traces of memory blocks.
+Return an int.
+True if the tracemalloc module is tracing Python memory
+allocations, False otherwise.
+See also start() and stop() functions.
+Start tracing Python memory allocations: install hooks on Python memory
+allocators. Collected tracebacks of traces will be limited to nframe
+frames. By default, a trace of a memory block only stores the most recent
+frame: the limit is 1. nframe must be greater or equal to 1.
+Storing more than 1 frame is only useful to compute statistics grouped
+by 'traceback' or to compute cumulative statistics: see the
+Snapshot.compare_to() and Snapshot.statistics() methods.
+Storing more frames increases the memory and CPU overhead of the
+tracemalloc module. Use the get_tracemalloc_memory() function
+to measure how much memory is used by the tracemalloc module.
+The PYTHONTRACEMALLOC environment variable
+(PYTHONTRACEMALLOC=NFRAME) and the -X tracemalloc=NFRAME
+command line option can be used to start tracing at startup.
+See also stop(), is_tracing() and get_traceback_limit()
+functions.
+Stop tracing Python memory allocations: uninstall hooks on Python memory
+allocators. Also clears all previously collected traces of memory blocks
+allocated by Python.
+Call take_snapshot() function to take a snapshot of traces before
+clearing them.
+See also start(), is_tracing() and clear_traces()
+functions.
+Take a snapshot of traces of memory blocks allocated by Python. Return a new
+Snapshot instance.
+The snapshot does not include memory blocks allocated before the
+tracemalloc module started to trace memory allocations.
+Tracebacks of traces are limited to get_traceback_limit() frames. Use
+the nframe parameter of the start() function to store more frames.
+The tracemalloc module must be tracing memory allocations to take a
+snapshot, see the start() function.
+See also the get_object_traceback() function.
+Filter on traces of memory blocks.
+See the fnmatch.fnmatch() function for the syntax of
+filename_pattern. The '.pyc' file extension is
+replaced with '.py'.
+Examples:
+Changed in version 3.5: The '.pyo' file extension is no longer replaced with '.py'.
+If inclusive is True (include), only trace memory blocks allocated
+in a file with a name matching filename_pattern at line number
+lineno.
+If inclusive is False (exclude), ignore memory blocks allocated in
+a file with a name matching filename_pattern at line number
+lineno.
+Line number (int) of the filter. If lineno is None, the filter
+matches any line number.
+Filename pattern of the filter (str).
+If all_frames is True, all frames of the traceback are checked. If
+all_frames is False, only the most recent frame is checked.
+This attribute has no effect if the traceback limit is 1.  See the
+get_traceback_limit() function and Snapshot.traceback_limit
+attribute.
+Frame of a traceback.
+The Traceback class is a sequence of Frame instances.
+Filename (str).
+Line number (int).
+Snapshot of traces of memory blocks allocated by Python.
+The take_snapshot() function creates a snapshot instance.
+Compute the differences with an old snapshot. Get statistics as a sorted
+list of StatisticDiff instances grouped by group_by.
+See the Snapshot.statistics() method for group_by and cumulative
+parameters.
+The result is sorted from the biggest to the smallest by: absolute value
+of StatisticDiff.size_diff, StatisticDiff.size, absolute
+value of StatisticDiff.count_diff, Statistic.count and
+then by StatisticDiff.traceback.
+Write the snapshot into a file.
+Use load() to reload the snapshot.
+Create a new Snapshot instance with a filtered traces
+sequence, filters is a list of Filter instances.  If filters
+is an empty list, return a new Snapshot instance with a copy of
+the traces.
+All inclusive filters are applied at once, a trace is ignored if no
+inclusive filters match it. A trace is ignored if at least one exclusive
+filter matches it.
+Load a snapshot from a file.
+See also dump().
+Get statistics as a sorted list of Statistic instances grouped
+by group_by:
+If cumulative is True, cumulate size and count of memory blocks of
+all frames of the traceback of a trace, not only the most recent frame.
+The cumulative mode can only be used with group_by equals to
+'filename' and 'lineno'.
+The result is sorted from the biggest to the smallest by:
+Statistic.size, Statistic.count and then by
+Statistic.traceback.
+Maximum number of frames stored in the traceback of traces:
+result of the get_traceback_limit() when the snapshot was taken.
+Traces of all memory blocks allocated by Python: sequence of
+Trace instances.
+The sequence has an undefined order. Use the Snapshot.statistics()
+method to get a sorted list of statistics.
+Statistic on memory allocations.
+Snapshot.statistics() returns a list of Statistic instances.
+See also the StatisticDiff class.
+Number of memory blocks (int).
+Total size of memory blocks in bytes (int).
+Traceback where the memory block was allocated, Traceback
+instance.
+Statistic difference on memory allocations between an old and a new
+Snapshot instance.
+Snapshot.compare_to() returns a list of StatisticDiff
+instances. See also the Statistic class.
+Number of memory blocks in the new snapshot (int): 0 if
+the memory blocks have been released in the new snapshot.
+Difference of number of memory blocks between the old and the new
+snapshots (int): 0 if the memory blocks have been allocated in
+the new snapshot.
+Total size of memory blocks in bytes in the new snapshot (int):
+0 if the memory blocks have been released in the new snapshot.
+Difference of total size of memory blocks in bytes between the old and
+the new snapshots (int): 0 if the memory blocks have been
+allocated in the new snapshot.
+Traceback where the memory blocks were allocated, Traceback
+instance.
+Trace of a memory block.
+The Snapshot.traces attribute is a sequence of Trace
+instances.
+Size of the memory block in bytes (int).
+Traceback where the memory block was allocated, Traceback
+instance.
+Sequence of Frame instances sorted from the most recent frame to
+the oldest frame.
+A traceback contains at least 1 frame. If the tracemalloc module
+failed to get a frame, the filename "<unknown>" at line number 0 is
+used.
+When a snapshot is taken, tracebacks of traces are limited to
+get_traceback_limit() frames. See the take_snapshot() function.
+The Trace.traceback attribute is an instance of Traceback
+instance.
+Format the traceback as a list of lines with newlines.  Use the
+linecache module to retrieve lines from the source code.  If
+limit is set, only format the limit most recent frames.
+Similar to the traceback.format_tb() function, except that
+format() does not include newlines.
+Example:
+Output:
+27.6. trace — Trace or track Python statement execution
+28. Software Packaging and Distribution
+
+    Enter search terms or a module, class or function name.
+    
+

@@ -1,0 +1,64 @@
+This is BibTeX, Version 0.99d (TeX Live 2013/Debian)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: CS446projProposal.aux
+The style file: plain.bst
+Database file #1: /home/kris/Downloads/lib.bib.bib
+Repeated entry---line 433 of file /home/kris/Downloads/lib.bib.bib
+ : @article{Li2010
+ :                ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1320 of file /home/kris/Downloads/lib.bib.bib
+ : @article{Zeng2016
+ :                  ,
+I'm skipping whatever remains of this entry
+Warning--to sort, need author or key in Conte89:online
+Warning--to sort, need author or key in Learn49:online
+Warning--to sort, need author or key in AnInt60:online
+Warning--to sort, need author or key in Perso60:online
+Warning--to sort, need author or key in Multi59:online
+Warning--to sort, need author or key in agraw23:online
+Warning--to sort, need author or key in Adver67:online
+Warning--empty journal in Li2010
+Warning--empty journal in Zeng2016
+You've used 10 entries,
+            2118 wiz_defined-function locations,
+            543 strings with 5526 characters,
+and the built_in function-call counts, 2349 in all, are:
+= -- 231
+> -- 76
+< -- 1
++ -- 35
+- -- 24
+* -- 119
+:= -- 336
+add.period$ -- 30
+call.type$ -- 10
+change.case$ -- 42
+chr.to.int$ -- 0
+cite$ -- 19
+duplicate$ -- 90
+empty$ -- 234
+format.name$ -- 24
+if$ -- 529
+int.to.chr$ -- 0
+int.to.str$ -- 10
+missing$ -- 3
+newline$ -- 53
+num.names$ -- 6
+pop$ -- 93
+preamble$ -- 1
+purify$ -- 32
+quote$ -- 0
+skip$ -- 67
+stack$ -- 0
+substring$ -- 99
+swap$ -- 17
+text.length$ -- 1
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 40
+warning$ -- 9
+while$ -- 11
+width$ -- 12
+write$ -- 95
+(There were 2 error messages)

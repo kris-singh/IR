@@ -1,0 +1,95 @@
+URL: https://docs.python.org/3/installing/index.html
+
+Title: Installing Python Modules — Python 3.5.2 documentation
+
+Doc Id: 4
+
+Meta Tags : No meta tag found in document
+
+Date :Jun 27, 2016
+
+Content :As a popular open source development project, Python has an active
+supporting community of contributors and users that also make their software
+available for other Python developers to use under open source license terms.
+This allows Python users to share and collaborate effectively, benefiting
+from the solutions others have already created to common (and sometimes
+even rare!) problems, as well as potentially contributing their own
+solutions to the common pool.
+This guide covers the installation part of the process. For a guide to
+creating and sharing your own Python projects, refer to the
+distribution guide.
+Note
+For corporate and other institutional users, be aware that many
+organisations have their own policies around using and contributing to
+open source software. Please take such policies into account when making
+use of the distribution and installation tools provided with Python.
+The standard packaging tools are all designed to be used from the command
+line.
+The following command will install the latest version of a module and its
+dependencies from the Python Packaging Index:
+Note
+For POSIX users (including Mac OS X and Linux users), the examples in
+this guide assume the use of a virtual environment.
+For Windows users, the examples in this guide assume that the option to
+adjust the system PATH environment variable was selected when installing
+Python.
+It’s also possible to specify an exact or minimum version directly on the
+command line. When using comparator operators such as >, < or some other
+special character which get interpreted by shell, the package name and the
+version should be enclosed within double quotes:
+Normally, if a suitable module is already installed, attempting to install
+it again will have no effect. Upgrading existing modules must be requested
+explicitly:
+More information and resources regarding pip and its capabilities can be
+found in the Python Packaging User Guide.
+pyvenv has its own documentation at pyvenv - Creating virtual environments. Installing
+into an active virtual environment uses the commands shown above.
+See also
+Python Packaging User Guide: Installing Python Distribution Packages
+These are quick answers or links for some common tasks.
+Python only started bundling pip with Python 3.4. For earlier versions,
+pip needs to be “bootstrapped” as described in the Python Packaging
+User Guide.
+See also
+Python Packaging User Guide: Requirements for Installing Packages
+Passing the --user option to python -m pip install will install a
+package just for the current user, rather than for all users of the system.
+A number of scientific Python packages have complex binary dependencies, and
+aren’t currently easy to install using pip directly. At this point in
+time, it will often be easier for users to install these packages by
+other means
+rather than attempting to install them with pip.
+See also
+Python Packaging User Guide: Installing Scientific Packages
+On Linux, Mac OS X and other POSIX systems, use the versioned Python commands
+in combination with the -m switch to run the appropriate copy of
+pip:
+(appropriately versioned pip commands may also be available)
+On Windows, use the py Python launcher in combination with the -m
+switch:
+On Linux systems, a Python installation will typically be included as part
+of the distribution. Installing into this Python installation requires
+root access to the system, and may interfere with the operation of the
+system package manager and other components of the system if a component
+is unexpectedly upgraded using pip.
+On such systems, it is often better to use a virtual environment or a
+per-user installation when installing packages with pip.
+Python has typically relied heavily on source based distribution, with end
+users being expected to compile extension modules from source as part of
+the installation process.
+With the introduction of support for the binary wheel format, and the
+ability to publish wheels for at least Windows and Mac OS X through the
+Python Packaging Index, this problem is expected to diminish over time,
+as users are more regularly able to install pre-built extensions rather
+than needing to build them themselves.
+Some of the solutions for installing scientific software
+that is not yet available as pre-built wheel files may also help with
+obtaining other binary extensions without needing to build them locally.
+See also
+Python Packaging User Guide: Binary Extensions
+Distributing Python Modules
+Python HOWTOs
+
+    Enter search terms or a module, class or function name.
+    
+
